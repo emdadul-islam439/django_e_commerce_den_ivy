@@ -74,12 +74,12 @@
             ]
     -> That's it!
 
-## Create 'urls.py' in the basic_app:  
+## Create 'urls.py' in the basic_app:  [DONE]
     -> create 'urls.py' 
     -> copy the codes of 'basic_project/urls.py'
     -> paste the codes into the 'basic_app/urls.py'
 
-## Defining "path-variables":  
+## Defining "path-variables":  [DONE]
     -> first all the request comes to the 'basic_project/urls.py' file 
     -> then it can be directly send the user to a page
         OR, it will send the request to the 'basic_app/urls.py' file 
@@ -103,7 +103,7 @@
         * def index(request):
         *    return HttpResponse("This is HOME PAGE")
 
-## adding "about", "Services", or "Contact" pages   
+## adding "about", "Services", or "Contact" pages   [DID SIMILAR]
     -> in the 'basic_app/urls' add different end-points 
         * urlpatterns = [
             ..... , 
@@ -127,13 +127,13 @@
         ** Why we've not added any code into 'basic_project/urls.py', and the server given expected-output?
 
 
-## adding 'static' and 'templates' files:  
+## adding 'static' and 'templates' files:  [DONE]
     -> create two directories exactly inside '01_django_basic_app_cwh/basic_project/basic_project' folder
         - create 'static' and 'templates' directory
         - for 'static' folder-> inside 'basic_projects/settings.py' add this:
             * # manually added
               STATICFILES_DIRS = [
-                  os.path.join(BASE_DIR, "static")
+                  os.path.join(BASE_DIR, "static"),
               ]
 
         - for 'templates' folder-> inside 'basic_projects/settings.py' add this:
