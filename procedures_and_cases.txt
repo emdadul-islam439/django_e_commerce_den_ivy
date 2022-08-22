@@ -64,6 +64,14 @@
         * cd basic_project
     -> write 'startapp' command
         * python manage.py startapp basic_app
+
+    -> in 'ecommerce/settings.py' register 'basic_app'   [ALREADY DID]
+        - from 'store/apps.py' copy the class-name 'StoreConfig'
+        - write this line inside 'INSTALLED_APPS' list (have to be string and put a comma after that)
+        * INSTALLED_APPS = [
+                'store.apps.StoreConfig',
+                '......
+            ]
     -> That's it!
 
 ## Create 'urls.py' in the basic_app:  
@@ -286,13 +294,7 @@
     -> REGISTER 'basic_app' and 'Contact'  
         - in 'basic_app/admin.py' register the 'Contact' class 
             * admin.site.register(Contact)
-        - in 'basic_project/settings.py' register 'basic_app'   [ALREADY DID]
-            - from 'basic_app/apps.py' copy the class-name 'BasicAppConfig'
-            - write this line inside 'INSTALLED_APPS' list (have to be string and put a comma after that)
-            * INSTALLED_APPS = [
-                  'basic_app.apps.BasicAppConfig',
-                  '......
-              ]
+
     -> write commands for migration:
         - write: "python manage.py makemigrations"
             - OUTPUT: Migrations for 'basic_app':
