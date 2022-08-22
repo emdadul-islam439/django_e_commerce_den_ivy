@@ -154,7 +154,7 @@
         - use "return render(request, "index.html")" instead of "return HttpResponse("This is HOME page")"
 
 
-## sending 'data' into templates files  
+## sending 'data' into templates files 
     -> define a dictionary.
         * context = {
             "variable_1": "This is variable 1",
@@ -176,7 +176,7 @@
 
 
 
-## Adding HTML ELEMENTS from Bootstrap: [DONE, just copy-pasted 'starter code' 
+## Adding HTML ELEMENTS from Bootstrap: [DONE, just copy-pasted 'starter code' [DONE SIMILAR]
     and from: "https://github.com/CoreyMSchafer/code_snippets/tree/master/Django_Blog/03-Templates"]
     -> from "https://getbootstrap.com/docs/4.4/getting-started/introduction/"
         - copy-paste the 'starter code' into 'index.html' file 
@@ -191,7 +191,7 @@
         - from 'light' to 'dark'
 
 
-## "Migrating": Beginning:  
+## "Migrating": Beginning:  [DONE]
     -> first check if any migrations is pending now
         * "python manage.py makemigrations"
         - if nothing is pending, then show 
@@ -205,14 +205,14 @@
               Apply all migrations: admin, auth, contenttypes, sessions.....
 
 
-## Creating "SuperUser":  
+## Creating "SuperUser":  [DONE]
     -> write:
         * python manage.py createsuperuser
     -> Give the user-name/passwords
     -> That's it!
 
 
-## Changing "Django Administration" Site text: [NOT NEEDED]
+## Changing "Django Administration" Site text: [ NOT NEEDED ]
     -> in the 'basic_project/urls.py':
         - below the 'import section' add these lines
         * admin.site.site_header = "UMSRA Admin"
@@ -221,7 +221,7 @@
 
         - change the values as your wish
 
-## Using TEMPLATES: [ALREADY DID SIMILAR THING]
+## Using TEMPLATES: [Made main.html insteaad of base.html]
     -> make a file named 'base.html' and CUT-paste all codes from 'index.html
     -> in the 'base.html' file
         - below 'Navbar' section, create a BLOCK named 'body'
@@ -238,7 +238,7 @@
     
     -> codes of the 'index.html' file will be replaced into base.html file's written blocks 
 
-## making and assigning other pages' files  [ALREADY DID SIMILAR]
+## making and assigning other pages' files  [ ALREADY DID SIMILAR ]
     -> inside 'templates/' folder:
         - create 'about.html', 'services.html' and 'contact.html' file 
         - copy paste the BLOCKS from 'index.html' 
@@ -251,7 +251,7 @@
             * return render(request, "about.html") 
         - assign "services.html" and "contact.html" inside their relative functions 
 
-## Design The webpages:   [ALREADY DID SIMILAR]
+## Design The webpages:   [ ALREADY DID SIMILAR ]
     ---> For index.html Do this: 
     -> copy-paste- corousel
         - go to "https://getbootstrap.com/docs/4.4/components/carousel/#with-captions"
@@ -278,7 +278,7 @@
         * </form>
 
 
-## Create Models:  
+## Create Models:  [DONE]
     -> in the 'basic_app/models.py':
         - create a class 'Contact' and define all the fields 
         - Example: 
@@ -290,7 +290,7 @@
         *     desc = models.TimeField()
         *     date = models.DateField() 
     
-## FOR MIGRATION:  
+## FOR MIGRATION:  [DONE]
     -> REGISTER 'basic_app' and 'Contact'  
         - in 'basic_app/admin.py' register the 'Contact' class 
             * admin.site.register(Contact)
@@ -311,7 +311,7 @@
         - see a table named "Contact" is showing up 
 
 
-## Showing our 'string' replacing "Custom Object(..)":  
+## Showing our 'string' replacing "Custom Object(..)":  [DONE]
     -> just return our string into the "__str__" function.
         - Example: 
         * def __str__(self) -> str:
@@ -323,7 +323,7 @@
             -> "Custom Object(1)"
 
 
-## Doing things in SHELL:  
+## Doing things in SHELL:  [NOT NEEDED NOW]
     -> in terminal write:
         * "python manage.py shell"
         - python interpreter will start 
@@ -371,7 +371,7 @@
         <QuerySet [<Post: New Post title>, <Post: Post title for new post>]>
 
 
-## CHANGE DATA REPRESENTATION:  
+## CHANGE DATA REPRESENTATION:  [NOT NEEDED NOW]
     -> SOURCE: "https://docs.djangoproject.com/en/2.1/ref/templates/builtins/#date"
         - "For example: {{ value|date:"D d M Y" }}"
 
