@@ -1,4 +1,4 @@
-## Enable Virutal Environment [DONE]
+## Enable Virutal Environment  [DONE]
     -> go to 'project's' root folder
         * "cd 01_flask_to_do_cwh"
     -> install vicrutal Environment
@@ -8,13 +8,13 @@
     -> activate virtual Environment
         * "source virtualEnv/bin/activate"
 
-## add .gitignore file [DONE]
+## add .gitignore file  [DONE]
     -> add different files/folder
         * __pycache__
         * virtualEnv
         * .DS_Store
 
-## Create requirements.txt file [DONE]
+## Create requirements.txt file  [DONE]
     -> if install any module/library using 'pip install', insert it's name
         * django
     -> write 'install command in the terminal:
@@ -30,16 +30,16 @@
 ------------------------------------ tasks/steps --------------------------------------
 
 
-## Install Django [DONE]
+## Install Django  [DONE]
     -> add 'django' into the requirements.txt file
     -> in the virtual environment write the 'install command' 
         * 'pip install -r requirements.txt'
 
-## Create 'django project' [DONE]
+## Create 'django project'  [DONE]
     -> type "django-admin startproject <app-name>
         * "django-admin startproject basic_app"
 
-## Start Django Server: [DONE]
+## Start Django Server:  [NOT NEEDED NOW]
     -> if you are in the parent folder go to the 'project' folder  
         - go to 'basic_app' from '01_django_basic_app_cwh'
             * cd basic_app
@@ -59,19 +59,19 @@
     -> [TRICK] just find-replace the old-name into new-name, where-ever you find the old-name. That's it!
 
 
-## Create app: [DONE]
+## Create app:  [DONE]
     -> go to the 'project' folder (if already not in the location)
         * cd basic_project
     -> write 'startapp' command
         * python manage.py startapp basic_app
     -> That's it!
 
-## Create 'urls.py' in the basic_app: [DONE]
+## Create 'urls.py' in the basic_app:  
     -> create 'urls.py' 
     -> copy the codes of 'basic_project/urls.py'
     -> paste the codes into the 'basic_app/urls.py'
 
-## Defining "path-variables": [DONE]
+## Defining "path-variables":  
     -> first all the request comes to the 'basic_project/urls.py' file 
     -> then it can be directly send the user to a page
         OR, it will send the request to the 'basic_app/urls.py' file 
@@ -95,7 +95,7 @@
         * def index(request):
         *    return HttpResponse("This is HOME PAGE")
 
-## adding "about", "Services", or "Contact" pages  [DONE]
+## adding "about", "Services", or "Contact" pages   
     -> in the 'basic_app/urls' add different end-points 
         * urlpatterns = [
             ..... , 
@@ -119,7 +119,7 @@
         ** Why we've not added any code into 'basic_project/urls.py', and the server given expected-output?
 
 
-## adding 'static' and 'templates' files: [DONE]
+## adding 'static' and 'templates' files:  
     -> create two directories exactly inside '01_django_basic_app_cwh/basic_project/basic_project' folder
         - create 'static' and 'templates' directory
         - for 'static' folder-> inside 'basic_projects/settings.py' add this:
@@ -146,7 +146,7 @@
         - use "return render(request, "index.html")" instead of "return HttpResponse("This is HOME page")"
 
 
-## sending 'data' into templates files [DONE]
+## sending 'data' into templates files  
     -> define a dictionary.
         * context = {
             "variable_1": "This is variable 1",
@@ -183,7 +183,7 @@
         - from 'light' to 'dark'
 
 
-## "Migrating": Beginning: [DONE]
+## "Migrating": Beginning:  
     -> first check if any migrations is pending now
         * "python manage.py makemigrations"
         - if nothing is pending, then show 
@@ -197,7 +197,7 @@
               Apply all migrations: admin, auth, contenttypes, sessions.....
 
 
-## Creating "SuperUser": [DONE]
+## Creating "SuperUser":  
     -> write:
         * python manage.py createsuperuser
     -> Give the user-name/passwords
@@ -270,7 +270,7 @@
         * </form>
 
 
-## Create Models: [DONE]
+## Create Models:  
     -> in the 'basic_app/models.py':
         - create a class 'Contact' and define all the fields 
         - Example: 
@@ -282,8 +282,8 @@
         *     desc = models.TimeField()
         *     date = models.DateField() 
     
-## FOR MIGRATION: [DONE]
-    -> REGISTER 'basic_app' and 'Contact' [DONE]
+## FOR MIGRATION:  
+    -> REGISTER 'basic_app' and 'Contact'  
         - in 'basic_app/admin.py' register the 'Contact' class 
             * admin.site.register(Contact)
         - in 'basic_project/settings.py' register 'basic_app'   [ALREADY DID]
@@ -309,7 +309,7 @@
         - see a table named "Contact" is showing up 
 
 
-## Showing our 'string' replacing "Custom Object(..)": [DONE]
+## Showing our 'string' replacing "Custom Object(..)":  
     -> just return our string into the "__str__" function.
         - Example: 
         * def __str__(self) -> str:
@@ -321,7 +321,7 @@
             -> "Custom Object(1)"
 
 
-## Doing things in SHELL: [DONE]
+## Doing things in SHELL:  
     -> in terminal write:
         * "python manage.py shell"
         - python interpreter will start 
@@ -369,7 +369,7 @@
         <QuerySet [<Post: New Post title>, <Post: Post title for new post>]>
 
 
-## CHANGE DATA REPRESENTATION: [DONE]
+## CHANGE DATA REPRESENTATION:  
     -> SOURCE: "https://docs.djangoproject.com/en/2.1/ref/templates/builtins/#date"
         - "For example: {{ value|date:"D d M Y" }}"
 
