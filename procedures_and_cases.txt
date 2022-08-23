@@ -1215,3 +1215,27 @@
         *       ...... 
         *     {% endif %}
         * {% endblock content %}
+
+
+
+
+---------------------- Working with JS ------------------------
+
+## start working with JS files
+    -> in 'static/' folder, create a new folder called 'js'
+    -> in 'static/js' create a file 'cart.js' and write these code
+        * console.log("Hello World!")
+    -> in 'template/store/main.html' adding this line at the bottom of 'body' section
+        * <!DOCTYPE html>
+        * {% load static %}
+        * <html>
+        *     <head>
+        *         ...
+        *     </head>
+        *     <body>
+        *         ....
+        *         <script type="text/javascript" src="{% static 'js/cart.js' %}"></script>
+        *     </body>
+        * </html>
+    -> Now, reload any page, 'inspect' it and go to 'console' section.
+        - you will see the 'Hellow World' in the console
