@@ -1362,3 +1362,112 @@
             *    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
             *    <meta name="viewport"...... />
             * </head> 
+
+
+## RELOADING a page:
+    -> just add "location.reload()" and that's it!
+        - in 'cart.js', add the command:
+            * function updateUserOrder(...){
+            *     ...
+            *     fetch(...)
+            *     .then(....)
+            *     .then((data){
+            *         ....
+            *         location.load()
+            *     })
+            * }
+
+
+
+---------------------------------------- PURE JS IS NOW OVER NOW --------------------------------------
+
+
+
+## ADDING-REMOVING product from CART 
+    -> in "Views.py", change these codes
+        - From:
+            * def UpdateItem(request):
+            *     return JsonResponse('Item was added', safe=False)
+        - To:
+            * def UpdateItem(request):
+            *      data = json.loads(request.body)
+            *      
+            *      action = data['action']
+            *      productId = data['productId']
+            *      
+            *      print(f"productId = {productId} ")
+            *      print(f"action = {action}")
+            *      
+            *      customer = request.user.customer
+            *      product = Product.objects.get(id = productId)
+            *      order, created = Order.objects.get_or_create(customer = customer, complete = False)
+            *      orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
+            *      
+            *      
+            *      if action == 'add':
+            *          orderItem.quantity += 1
+            *          response_message = 'Item was ADDED successfully'
+            *      elif action == 'remove':
+            *          orderItem.quantity -= 1
+            *          response_message = 'Item was DELETED successfully'
+            *      
+            *      orderItem.save()
+            *      
+            *      if orderItem.quantity <= 0:
+            *          orderItem.delete()
+            *      
+            *      return JsonResponse(response_message, safe=False)
+    
+
+        - From:
+            * def store(request):
+            *     products = Product.objects.all()
+            *     context={ 'products' : products }
+            *     return render(request, 'store/store.html', context)
+
+        - To:
+            * def store(request):
+            *      if request.user.is_authenticated:
+            *          customer = request.user.customer
+            *          order, created = Order.objects.get_or_create(customer = customer, complete = False)
+            *          items = order.orderitem_set.all()
+            *          noOfCartItems = order.get_number_of_items
+            *      else:
+            *          items = []
+            *          order = {
+            *              'get_cart_total': 0,
+            *              'get_number_of_items': 0
+            *          }
+            *          noOfCartItems = order['get_number_of_items']
+            *          
+            *      products = Product.objects.all()
+            *      context={ 'products' : products, 'noOfCartItems':  noOfCartItems }
+            *      return render(request, 'store/store.html', context)
+
+        
+        - Also modify "def cart(...)" and "def checkout(...)"
+            - add:
+                * def cart/checkout(request):
+                *      if request.user.is_authenticated:
+                *          ....
+                *          noOfCartItems = order.get_number_of_items
+                *      else:
+                *          ....
+                *          noOfCartItems = order['get_number_of_items']
+            - add:
+                * context={ ... 'noOfCartItems':  noOfCartItems }
+    
+    -> in "main.html" modify this line:
+        - From:
+            * <p id="cart-total"> 0 </p>
+        - To:
+            * <p id="cart-total">{{ noOfCartItems }}</p>
+
+    
+    -> in "cart.html" modify these lines:
+        - From: 
+            * <img class="chg-quantity" src="{% static  'images/arrow-up.png' %}">
+            * <img class="chg-quantity" src="{% static  'images/arrow-down.png' %}">
+        - To: 
+            * <img data-product={{item.product.id}} data-action="add"  class="chg-quantity update-cart" src="{% static  'images/arrow-up.png' %}">
+            * <img data-product={{item.product.id}} data-action="remove"  class="chg-quantity update-cart" src="{% static  'images/arrow-down.png' %}">

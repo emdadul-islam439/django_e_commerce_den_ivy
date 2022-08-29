@@ -33,7 +33,7 @@ function updateUserOrder(productId, action){
             'X-CSRFToken': csrftoken,
         },
         body: JSON.stringify({
-            'productId:': productId, 'action': action 
+            'productId': productId, 'action': action 
         })
     })
 
@@ -43,5 +43,6 @@ function updateUserOrder(productId, action){
 
     .then((data)=>{
         console.log('data:', data)
+        location.reload()
     })
 }
