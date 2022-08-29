@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from store.models import Order, Product
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 def store(request):
@@ -36,3 +38,7 @@ def checkout(request):
     
     context={ 'items': items, 'order': order }
     return render(request, 'store/checkout.html', context)
+
+# @csrf_exempt
+def UpdateItem(request):
+    return JsonResponse('Item was added', safe=False)

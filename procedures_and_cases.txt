@@ -1239,3 +1239,126 @@
         * </html>
     -> Now, reload any page, 'inspect' it and go to 'console' section.
         - you will see the 'Hellow World' in the console
+
+
+
+## Working with HTML-ELEMENTS by JAVASCR:
+    -> in the 'store.html' file replace this line:
+        - From:
+            * <button  class="btn btn-outline-secondary add-btn">Add to Cart</button>
+        - To:
+            * <button data-product={{product.id}} data-action="add"  class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
+
+    -> in the cart.js file write this code 
+        * var updateBtns = document.getElementsByClassName('update-cart')
+        * console.log('updateBtns.length = ', updateBtns.length)
+        * 
+        * for(i = 0; i < updateBtns.length; i++){
+        *     updateBtns[i].addEventListener('click', function(){
+        *         var productId = this.dataset.product 
+        *         var action = this.dataset.action
+        *         console.log('productId:', productId, 'action:', action)
+        * 
+        *         console.log('USER: ', user) -------------------- (1)
+        *         if(user == 'AnonymousUser'){
+        *             console.log('not logged in...')
+        *         }else{
+        *             updateUserOrder(productId, action)
+        *         }
+        *     })
+        * }
+
+    -> For (1), add this into "main.html":
+        * <script type="text/javascript">
+        *   var user = '{{request.user}}'
+        * </script>
+
+
+
+## "FETCH" to different URL using JS:
+    -> in the "cart.js" file write this code 
+        * function updateUserOrder(productId, action){
+        *        console.log('User is authenticated, sending data...')
+        *
+        *        url = '/update_item/' ------------------- (1)
+        *
+        *        // var form = document.getElementById('form')
+        *        // var csrftoken = form.getElementsByTagName('input')[0].value
+        *
+        *        fetch(url, {
+        *            method: 'POST',
+        *            headers: {
+        *                'Content-Type' : 'application/json',
+        *                'X-CSRFToken': csrftoken, ---------------------(2)
+        *            },
+        *            body: JSON.stringify({
+        *                'productId:': productId, 'action': action 
+        *            })
+        *        })
+        *
+        *        .then((response) => {
+        *            return response.json()
+        *        })
+        *        
+        *        .then((data)=>{
+        *            console.log('data:', data)
+        *        })
+        *  }
+
+    -> for (1), in "views.py" and "urls.py", add these:
+        - Views.py:
+            * def UpdateItem(request):
+            *     return JsonResponse('Item was added', safe=False)
+        - urls.py:
+            * path('update_item/', views.UpdateItem, name = 'update_item')
+    
+    -> for (2), in the 'main.html' file add this function 
+        * <script type="text/javascript">
+        *        var user = ....
+        *        var csrftoken = getCSRFToken('csrftoken');
+        *
+        *        function getCSRFToken(name) {
+        *            var cookieValue = null;
+        *            if (document.cookie && document.cookie != '') {
+        *                var cookies = document.cookie.split(';');
+        *                for (var i = 0; i < cookies.length; i++) {
+        *                    var cookie = jQuery.trim(cookies[i]);
+        *                    // Does this cookie string begin with the name we want?
+        *                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+        *                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        *                        break;
+        *                    }
+        *                }
+        *            }
+        *            return cookieValue;
+        *        }
+        *   </script>
+
+
+## FIX: 'csrf not generating' issue
+    -> NOT-SECURED: add '@csrf_exempt'
+        - in 'views.py' file, add these 
+            * from django.views.decorators.csrf import csrf_exempt
+            * @csrf_exempt
+            * def UpdateItem(request):
+            *     return JsonResponse('Item was added', safe=False)
+    
+    -> ERROR-PRONE: adding "{% csrf_token %}":
+        - under a '<form>' add: 
+            * "{% csrf_token %}" 
+        
+        - ERROR: 
+            -> We are submitting 'POST' request, but it's not from a FORM 
+            -> So, we are generating the "csrf_token" by JS method
+            -> But, we cannot use {% csrf_token %} into a JS code, 
+            -> So, whenever we've to generate a CSRF_TOKEN, we won't be able to use this method
+    
+    -> ANOTHER approach [WORKING PROPERLY]:
+        - Source: "https://stackoverflow.com/a/33924554"
+        - mainly 'not-generating csrf_token' problem creates for JQUERY.
+        - So, we will use this line into our "main.html" file:
+            * <head>
+            *    <title>....</title>
+            *    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+            *    <meta name="viewport"...... />
+            * </head> 
