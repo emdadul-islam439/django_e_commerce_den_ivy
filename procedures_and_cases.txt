@@ -1335,6 +1335,7 @@
         *   </script>
 
 
+
 ## FIX: 'csrf not generating' issue
     -> NOT-SECURED: add '@csrf_exempt'
         - in 'views.py' file, add these 
@@ -1364,6 +1365,7 @@
             * </head> 
 
 
+
 ## RELOADING a page:
     -> just add "location.reload()" and that's it!
         - in 'cart.js', add the command:
@@ -1376,6 +1378,29 @@
             *         location.load()
             *     })
             * }
+
+
+
+## HIDE/SHOW any HTML element:
+    -> (1) you can set "innerHTML = '' "
+    -> or, (2) you can set "classList.add('hidden')"
+        - In "checkout.html", we've written this code:
+        *  <script type="text/javascript">
+        *      var shipping = '{{order.shipping}}'
+        *      if(shipping == 'False'){
+        *          document.getElementById("shipping-info").innerHTML = '' ---------- (1)
+        *      }
+        *  
+        *      var form = document.getElementById('form')
+        *  
+        *      form.addEventListener('submit', function(e){
+        *          e.preventDefault()
+        *          console.log('Form Submitted...')
+        *  
+        *          document.getElementById('form-button').classList.add('hidden') -------------(2)
+        *          document.getElementById('payment-info').classList.remove('hidden') -----------(2)
+        *      })
+        *  </script>
 
 
 
@@ -1471,3 +1496,53 @@
         - To: 
             * <img data-product={{item.product.id}} data-action="add"  class="chg-quantity update-cart" src="{% static  'images/arrow-up.png' %}">
             * <img data-product={{item.product.id}} data-action="remove"  class="chg-quantity update-cart" src="{% static  'images/arrow-down.png' %}">
+
+
+
+
+## HIDE/SHOW 'Shipping Info' portion:
+    -> in "models.py" add this '@property':
+        * @property
+        * def shipping(self):
+        *     shipping = False
+        *     order_items = self.orderitem_set.all()
+        *     
+        *     for item in order_items:
+        *         if item.product.digital == False:
+        *             shipping = True
+        *             break
+        *     return shipping
+    
+    -> in "views.py" add 'shipping' key for 'not-logged-in' users:
+        - in 'def store()', 'def cart()', 'def checkout()', add these:
+            * else:
+            *   ....
+            *   order = {
+            *        ....
+            *        'shipping' = False
+            *    }
+        
+    -> in "checkout.html" add this JS code:
+        * <script type="text/javascript">
+        *     var shipping = '{{order.shipping}}'
+        *     if(shipping == 'False'){
+        *         document.getElementById("shipping-info").innerHTML = ''
+        *     }
+        * </script>
+
+
+
+## HIDE/SHOW 'Checkout' BUTTON:
+    -> in "checkout.html" add this JS code:
+        * <script type="text/javascript">
+        *     .....
+        *     var form = document.getElementById('form')
+        *     
+        *     form.addEventListener('submit', function(e){
+        *         e.preventDefault()
+        *         console.log('Form Submitted...')
+        *     
+        *         document.getElementById('form-button').classList.add('hidden')
+        *         document.getElementById('payment-info').classList.remove('hidden')
+        *     })
+        * </script>
