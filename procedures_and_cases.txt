@@ -1404,6 +1404,50 @@
 
 
 
+
+## Creating Cookie:
+    -> in "main.html", add this function in the '<script>' section:
+        * <script type="text/javascript">
+        *     ....
+        *     function getToken(name) {
+        *         .....
+        *     }
+        *     
+        *     function getCookie(name){
+        *         //split cookie string and get all individual 'name=value' pairs in an array
+        *         var cookieArr = document.cookie.split(";")
+        *     
+        *         //Loop through the array elements
+        *         for(var i = 0;  i<cookieArr.length; i++){
+        *             var cookiePair = cookieArr[i].split("=")
+        *     
+        *             //removing whitespaces from the beginning and ending of the cookie name
+        *             // and comparing it with the given string-> 'name'
+        *     
+        *             if(name == cookiePair[0].trim()){
+        *                 //Decode the cookie value and return 
+        *                 return decodeURIComponent(cookiePair[1])
+        *             }
+        *         }
+        *     
+        *         //return null if not found
+        *         return null
+        *     }
+        *     
+        *     var cart = JSON.parse(getCookie('cart'))
+        *     if(cart == undefined){
+        *         cart = {}
+        *         console.log('Cart Created!', cart)
+        *         document.cookie = 'cart=' + JSON.stringify(cart) + ';domain=;path=/'
+        *     }
+        *     console.log('Cart:', cart)
+        * </script>
+
+
+
+
+
+
 ---------------------------------------- PURE JS IS NOW OVER NOW --------------------------------------
 
 
