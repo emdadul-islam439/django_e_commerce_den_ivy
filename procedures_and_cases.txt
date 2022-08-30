@@ -1805,3 +1805,39 @@
             * 
             *     context={ 'items': items, 'order': order, 'noOfCartItems':  noOfCartItems }
             *     return render(request, 'store/cart.html', context)
+    
+    -> follow this step for "def store()" and "def checkout()" functions also 
+
+
+
+## cleaning up more codes from "views.py" file:
+    -> create a function and copy-paste codes from "views.py"
+        - from "views.py" cut the "if-else" portion of "def cart()" function
+            * def cart(request):
+            *    ........... cut the whole if-else block .............
+
+        - in "utils.py" create this function:
+            * def cartData(request):  ------------------ it's not "cookieCart(..)" function
+            *     ....... paste here from "views.py" file's 'def cart()' method .......
+            *     return {
+            *         'noOfCartItems': noOfCartItems, 
+            *         'order': order, 
+            *         'items': items
+            *     }
+
+    -> get the returned values from "def cookieCart(...)" functions in the "def cart(..)" function:
+            - the "def cart(..)" function will be like this:
+            * import . utils import cookieCart, cartData
+            * ....
+            * ....
+            *
+            * def cart(request):
+            *     cookieData = cartData(request = request)
+            *     noOfCartItems = cookieData['noOfCartItems']
+            *     order = cookieData['order']
+            *     items = cookieData['items']
+            * 
+            *     context={ 'items': items, 'order': order, 'noOfCartItems':  noOfCartItems }
+            *     return render(request, 'store/cart.html', context)
+    
+    -> follow this step for "def store()" and "def checkout()" functions also 

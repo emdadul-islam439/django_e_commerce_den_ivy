@@ -5,18 +5,12 @@ from store.models import Order, Product, OrderItem, ShippingAddress
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import datetime
-from . utils import cookieCart    
+from . utils import cookieCart, cartData
 
 # Create your views here.
 def store(request):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer = customer, complete = False)
-        items = order.orderitem_set.all()
-        noOfCartItems = order.get_number_of_items
-    else:
-        cookieData = cookieCart(request = request)
-        noOfCartItems = cookieData['noOfCartItems']
+    cookieData = cartData(request = request)
+    noOfCartItems = cookieData['noOfCartItems']
         
     products = Product.objects.all()
     context={ 'products' : products, 'noOfCartItems':  noOfCartItems }
@@ -24,33 +18,20 @@ def store(request):
 
 
 def cart(request):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer = customer, complete = False)
-        items = order.orderitem_set.all()
-        noOfCartItems = order.get_number_of_items
-    else:
-        cookieData = cookieCart(request = request)
-        noOfCartItems = cookieData['noOfCartItems']
-        order = cookieData['order']
-        items = cookieData['items']
-        
+    cookieData = cartData(request = request)
+    noOfCartItems = cookieData['noOfCartItems']
+    order = cookieData['order']
+    items = cookieData['items']
     
     context={ 'items': items, 'order': order, 'noOfCartItems':  noOfCartItems }
     return render(request, 'store/cart.html', context)
 
 
 def checkout(request):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer = customer, complete = False)
-        items = order.orderitem_set.all()
-        noOfCartItems = order.get_number_of_items
-    else:
-        cookieData = cookieCart(request = request)
-        noOfCartItems = cookieData['noOfCartItems']
-        order = cookieData['order']
-        items = cookieData['items']
+    cookieData = cartData(request = request)
+    noOfCartItems = cookieData['noOfCartItems']
+    order = cookieData['order']
+    items = cookieData['items']
     
     context={ 'items': items, 'order': order, 'noOfCartItems':  noOfCartItems }
     return render(request, 'store/checkout.html', context)
@@ -70,7 +51,6 @@ def UpdateItem(request):
     product = Product.objects.get(id = productId)
     order, created = Order.objects.get_or_create(customer = customer, complete = False)
     orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
-    
     
     if action == 'add':
         orderItem.quantity += 1
@@ -112,7 +92,6 @@ def processOrder(request):
                 state = data['shipping']['state'],
                 zipcode = data['shipping']['zipcode'],
             )
-        
     else:
         print('User is not authenticated....')
     return JsonResponse('Payment Completed...', safe=False)
