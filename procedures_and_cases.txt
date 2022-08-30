@@ -1945,3 +1945,71 @@
         *
         *     return JsonResponse('Payment Completed...', safe=False)
         *     
+
+
+##  moving 'process_order' codes to utils:
+    -> in "utils.py" create this function:
+        * def guestOrder(request, data):
+        *     print('User is not authenticated....')
+        *         
+        *     print('COOKIES:', request.COOKIES)
+        *     name = data['form']['name']
+        *     email = data['form']['email']
+        *     
+        *     
+        *     cookieData = cookieCart(request= request)
+        *     items = cookieData['items']
+        *     
+        *     customer, created = Customer.objects.get_or_create(
+        *         email = email,
+        *     )
+        *     customer.name = name 
+        *     customer.save()
+        *     
+        *     order = Order.objects.create(
+        *         customer = customer,
+        *         complete = False
+        *     )
+        *     
+        *     for item in items:
+        *         product = Product.objects.get(id= item['product']['id'])
+        *         
+        *         orderItem = OrderItem.objects.create(
+        *             product = product,
+        *             order = order,
+        *             quantity = item['quantity']
+        *         )
+        *     
+        *     return customer, order
+
+    -> in "views.py" modify the code of "def processOrder(...)" function:
+        *def processOrder(request):
+        *     print('Data: ', request.body)
+        *     transaction_id = datetime.datetime.now().timestamp()
+        *     data = json.loads(request.body)
+        *     print(f"Data : {data}")
+        *     
+        *     if request.user.is_authenticated:
+        *         customer = request.user.customer
+        *         order, created = Order.objects.get_or_create(customer = customer, complete = False)
+        *     else:
+        *         #................... just added this line by removing all the codes from 'else' block..............................
+        *         customer, order = guestOrder(request= request, data= data) 
+        *         
+        *     total = float(data['form']['total'])
+        *     order.transaction_id = transaction_id
+        *     
+        *     if total == order.get_cart_total:
+        *         order.complete = True
+        *     order.save()
+        *     
+        *     if order.shipping == True:
+        *         ShippingAddress.objects.create( 
+        *             customer = customer,
+        *             order = order,
+        *             address = data['shipping']['address'],
+        *             city = data['shipping']['city'],
+        *             state = data['shipping']['state'],
+        *             zipcode = data['shipping']['zipcode'],
+        *         )
+        *     return JsonResponse('Payment Completed...', safe=False)
