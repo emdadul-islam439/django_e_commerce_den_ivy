@@ -1760,3 +1760,48 @@
         *    context={ 'items': items, 'order': order, 'noOfCartItems':  noOfCartItems }
         *    return render(request, 'store/cart.html', context)
         *
+
+
+
+## taking the "guest-checkout" codes into "utils.py" file:
+    -> in "ecommerce/store/", create a file named "utils.py"
+    -> create a function and copy-paste codes from "views.py"
+        - from "views.py" cut the else portion of "def cart()" function
+            * def cart(request):
+            *    if request.user.is_authenticated:
+            *        ......
+            *    else:
+            *        ....... cut the whole "else" portion's code ..............
+
+        - in "utils.py" create this function:
+            * import json
+            * from . models import *
+            * 
+            * def cookieCart(request):
+            *     ....... paste here from "views.py" file's 'def cart()' method .......
+            *     return {
+            *         'noOfCartItems': noOfCartItems, 
+            *         'order': order, 
+            *         'items': items
+            *     }
+
+    -> get the returned values from "def cookieCart(...)" functions in the "def cart(..)" function:
+            - the "def cart(..)" function will be like this:
+            * import . utils import cookieCart
+            * ....
+            * ....
+            *
+            * def cart(request):
+            *     if request.user.is_authenticated:
+            *         customer = request.user.customer
+            *         order, created = Order.objects.get_or_create(customer = customer, complete = False)
+            *         items = order.orderitem_set.all()
+            *         noOfCartItems = order.get_number_of_items
+            *     else:
+            *         cookieData = cookieCart(request = request)
+            *         noOfCartItems = cookieData['noOfCartItems']
+            *         order = cookieData['order']
+            *         items = cookieData['items']
+            * 
+            *     context={ 'items': items, 'order': order, 'noOfCartItems':  noOfCartItems }
+            *     return render(request, 'store/cart.html', context)

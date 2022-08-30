@@ -5,6 +5,7 @@ from store.models import Order, Product, OrderItem, ShippingAddress
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import datetime
+from . utils import cookieCart    
 
 # Create your views here.
 def store(request):
@@ -14,13 +15,8 @@ def store(request):
         items = order.orderitem_set.all()
         noOfCartItems = order.get_number_of_items
     else:
-        items = []
-        order = {
-            'get_cart_total': 0,
-            'get_number_of_items': 0,
-            'shipping': False
-        }
-        noOfCartItems = order['get_number_of_items']
+        cookieData = cookieCart(request = request)
+        noOfCartItems = cookieData['noOfCartItems']
         
     products = Product.objects.all()
     context={ 'products' : products, 'noOfCartItems':  noOfCartItems }
@@ -34,46 +30,11 @@ def cart(request):
         items = order.orderitem_set.all()
         noOfCartItems = order.get_number_of_items
     else:
-        try:
-            cart = json.loads(request.COOKIES['cart'])
-        except:
-            cart = {}
-            
-        print('Cart: ', cart)
-        items = []
-        order = {
-            'get_cart_total': 0,
-            'get_number_of_items': 0,
-            'shipping': False
-        }
-        noOfCartItems = order['get_number_of_items']
+        cookieData = cookieCart(request = request)
+        noOfCartItems = cookieData['noOfCartItems']
+        order = cookieData['order']
+        items = cookieData['items']
         
-        for id in cart:
-            try:
-                noOfCartItems += cart[id]['quantity']
-
-                product = Product.objects.get(id= id)
-                total = (product.price * cart[id]['quantity'])
-
-                order['get_cart_total'] += total
-                order['get_number_of_items'] += cart[id]['quantity']
-
-                item = {
-                    'product': {
-                        'id': product.id,
-                        'name': product.name,
-                        'price': product.price,
-                        'imageURL': product.imageURL
-                    },
-                    'quantity': cart[id]['quantity'],
-                    'get_total': total
-                }
-                items.append(item)
-
-                if product.digital == False:
-                    order['shipping'] = True 
-            except:
-                pass
     
     context={ 'items': items, 'order': order, 'noOfCartItems':  noOfCartItems }
     return render(request, 'store/cart.html', context)
@@ -86,13 +47,10 @@ def checkout(request):
         items = order.orderitem_set.all()
         noOfCartItems = order.get_number_of_items
     else:
-        items = []
-        order = {
-            'get_cart_total': 0,
-            'get_number_of_items': 0,
-            'shipping': False
-        }
-        noOfCartItems = order['get_number_of_items']
+        cookieData = cookieCart(request = request)
+        noOfCartItems = cookieData['noOfCartItems']
+        order = cookieData['order']
+        items = cookieData['items']
     
     context={ 'items': items, 'order': order, 'noOfCartItems':  noOfCartItems }
     return render(request, 'store/checkout.html', context)
