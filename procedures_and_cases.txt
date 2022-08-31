@@ -2013,3 +2013,75 @@
         *             zipcode = data['shipping']['zipcode'],
         *         )
         *     return JsonResponse('Payment Completed...', safe=False)
+
+
+
+
+
+
+--------------------------------- PayPal Integration (I couldn't implement that, because the current country is BD) ------------------------------------
+
+## adding javascript codes into the "checkout.html" page:
+    -> Source: "https://developer.paypal.com/demo/checkout/#/pattern/client"
+    -> in the place of our "make payment" button, we have to replace with "paypal payment buttons-id"
+        - From:
+            *  <div class="box-element hidden" id="payment-info">
+            *      <small>Paypal Options</small>
+            *      <button id="make-payment" class="ml-2">Make Payment</button>
+            *  </div>
+            * 
+        - To:
+            *  <div class="box-element hidden" id="payment-info">
+            *      <small>Paypal Options</small>
+            *      #<button id="make-payment" class="ml-2">Make Payment</button>
+            *      <div id="paypal-button-container"></div>
+            *  </div>
+            *
+    -> Comment-out 'make-payment-button' related JS codes:
+        * # document.getElementById('make-payment').addEventListener('click', function(e){
+        * #    submitFormData()
+        * # })
+        *
+    -> in "checkout.html" page, before our <script> tag, add these lines:
+        *  <!-- Include the PayPal JavaScript SDK -->
+        *  <script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD"></script>
+        *  
+        *  <script>
+        *      // Render the PayPal button into #paypal-button-container
+        *      paypal.Buttons({
+        *  
+        *          // Set up the transaction
+        *          createOrder: function(data, actions) {
+        *              return actions.order.create({
+        *                  purchase_units: [{
+        *                      amount: {
+        *                          value: '88.44'
+        *                      }
+        *                  }]
+        *              });
+        *          },
+        *  
+        *          // Finalize the transaction
+        *          onApprove: function(data, actions) {
+        *              return actions.order.capture().then(function(orderData) {
+        *                  // Successful capture! For demo purposes:
+        *                  console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+        *                  var transaction = orderData.purchase_units[0].payments.captures[0];
+        *                  alert('Transaction '+ transaction.status + ': ' + transaction.id + '\n\nSee console for all available details');
+        *  
+        *                  // Replace the above to show a success message within this page, e.g.
+        *                  // const element = document.getElementById('paypal-button-container');
+        *                  // element.innerHTML = '';
+        *                  // element.innerHTML = '<h3>Thank you for your payment!</h3>';
+        *                  // Or go to another URL:  actions.redirect('thank_you.html');
+        *              });
+        *          }
+        *  
+        *  
+        *      }).render('#paypal-button-container');
+
+    -> If we want to tweak something into the PayPal related buttons, we can do:
+        - you can DISABLE any type of button:
+        - Source: "https://developer.paypal.com/sdk/js/configuration/#disable-funding"
+        - Example:
+            * <script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID&disable-funding=credit,card"></script>
