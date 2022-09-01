@@ -97,4 +97,40 @@ def processOrder(request):
             zipcode = data['shipping']['zipcode'],
         )
     return JsonResponse('Payment Completed...', safe=False)
+
+
+
+def updateWishList(request):
+    print('Data: ', request.body)
+    
+    data = json.loads(request.body)
+    print(f"Data : {data}")
+    
+    # if request.user.is_authenticated:
+    #     customer = request.user.customer
+    #     order, created = Order.objects.get_or_create(customer = customer, complete = False)
+        
+    #     total = float(data['form']['total'])
+        
+    #     if total == order.get_cart_total:
+    #         order.complete = True
+    #     order.save()
+        
+    #     if order.shipping == True:
+    #         ShippingAddress.objects.create( 
+    #             customer = customer,
+    #             order = order,
+    #             address = data['shipping']['address'],
+    #             city = data['shipping']['city'],
+    #             state = data['shipping']['state'],
+    #             zipcode = data['shipping']['zipcode'],
+    #         )
+    # else:
+    #     pass
+    
+    if data['action'] == 'add':
+        response = 'Added to wish-list'
+    elif data['action'] == 'remove':
+        response = 'Removed from wish-list'
+    return JsonResponse(response, safe=False)
     

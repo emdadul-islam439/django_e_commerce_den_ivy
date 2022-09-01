@@ -1471,6 +1471,103 @@
 
 
 
+## Implementing 'wish-list-dummy-behaviour'
+    -> if already 'active', then switch of the 'love-icon', else 'switch-on' the 'love-icon'
+        - create 'wishlist.js' in 'static/js/' folder
+        - add these codes 
+            * var wishListButtons = document.getElementsByClassName('wish-list')
+            * console.log('wishListButtons.length = ', wishListButtons.length)
+            * 
+            * for(i = 0; i < wishListButtons.length; i++){
+            *     wishListButtons[i].addEventListener('click', function(){
+            *         var productId = this.dataset.product 
+            * 
+            *         //for finding 'action', we have to get the clicked icon
+            *         var wishIcons = this.getElementsByClassName('wish-list-icon')
+            *         var action = wishIcons[0].dataset.action
+            *         var clickedIcon = wishIcons[0]
+            * 
+            *         for(j = 0; j < wishIcons.length; j++){
+            *             if(wishIcons[j].classList.contains('hidden') == false){
+            *                 action = wishIcons[j].dataset.action
+            *                 clickedIcon = wishIcons[j]
+            *             }
+            *         }
+            * 
+            *         console.log('productId:', productId, 'action:', action)
+            * 
+            *         console.log('USER: ', user)
+            *         if(user == 'AnonymousUser'){
+            *             alert('Login needed!')
+            *         }else{
+            *             updateWishList(productId, action, wishIcons)
+            *         }
+            *     })
+            * }
+            * 
+            * 
+            * function updateWishList(productId, action, wishIcons){
+            *     console.log('User is authenticated, sending data...')
+            * 
+            *     url = '/update_wish_list/'
+            * 
+            *     fetch(url, {
+            *         method: 'POST',
+            *         headers: {
+            *             'Content-Type' : 'application/json',
+            *             'X-CSRFToken': csrftoken,
+            *         },
+            *         body: JSON.stringify({
+            *             'productId': productId, 'action': action 
+            *         })
+            *     })
+            * 
+            *     .then((response) => {
+            *         console.log('response: ', response)
+            *         return response.json()
+            *     })
+            * 
+            *     .then((data)=>{
+            *         console.log('data:', data)
+            *         
+            *         var addIcon = wishIcons[0]
+            *         var removeIcon = wishIcons[1]
+            * 
+            *         if(action == 'add'){
+            *             addIcon.classList.add("hidden")
+            *             removeIcon.classList.remove("hidden")
+            *         }
+            *         else if(action == 'remove'){
+            *             addIcon.classList.remove('hidden')
+            *             removeIcon.classList.add('hidden')
+            *         }
+            *     })
+            * }
+        
+        - in 'store.html' file, add these lines of code:
+            * <div class="box-element product">
+            *     <strong>{{product.name}}</strong>
+            *
+            * --------------------- code adding STARTED ------------------------
+            *     <a data-product={{product.id}} class="text-decoration-none wish-list" style="float:right">
+            *         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heartt" viewBox="0 0 16 16">
+            *             <path class="wish-list-icon add"  style="color:black" data-action="add" d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"></path>
+            *             <path class="wish-list-icon remove hidden" style="color:MediumSeaGreen" data-action="remove" fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+            *         </svg>
+            *     </a>
+            *     
+            * --------------------- code adding ENDED --------------------------
+            *
+            *     <hr>
+            *     
+            *     <button data-product={{product.id}} data-action="add"  class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
+            *     <a class="btn btn-outline-success" href="#">View</a>
+            *     <h4 style="display: inline-block; float: right"><strong>${{product.price|floatformat:2}}</strong></h4>
+            *     
+            * </div>
+
+
+
 
 
 ---------------------------------------- PURE JS IS NOW OVER NOW --------------------------------------
@@ -2013,6 +2110,8 @@
         *             zipcode = data['shipping']['zipcode'],
         *         )
         *     return JsonResponse('Payment Completed...', safe=False)
+
+
 
 
 
