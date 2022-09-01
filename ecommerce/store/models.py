@@ -30,6 +30,14 @@ class Product(models.Model):
         
         return url
     
+    @property
+    def isInWishlist(self):
+        wishListItems = self.wishlistitem_set.all()
+        if len(wishListItems) > 0:
+            return "True" 
+        else:
+            return "False"
+    
     
     
 class Order(models.Model):

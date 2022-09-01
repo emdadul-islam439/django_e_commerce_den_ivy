@@ -1,7 +1,7 @@
 import json
 from urllib import response
 from django.shortcuts import render
-from store.models import Order, Product, OrderItem, ShippingAddress, Customer
+from store.models import Order, Product, OrderItem, ShippingAddress, Customer, WishListItem
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import datetime
@@ -13,7 +13,7 @@ def store(request):
     noOfCartItems = cookieData['noOfCartItems']
         
     products = Product.objects.all()
-    context={ 'products' : products, 'noOfCartItems':  noOfCartItems }
+    context={ 'products' : products, 'noOfCartItems':  noOfCartItems}
     return render(request, 'store/store.html', context)
 
 
@@ -105,32 +105,23 @@ def updateWishList(request):
     
     data = json.loads(request.body)
     print(f"Data : {data}")
+    response = ''
     
-    # if request.user.is_authenticated:
-    #     customer = request.user.customer
-    #     order, created = Order.objects.get_or_create(customer = customer, complete = False)
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        product_id = data['productId']
+        product = Product.objects.get(id = product_id)
+        print(f'customer = {customer} | product_id = {product_id} | product.name = {product.name} ')
+        wishListItem, created = WishListItem.objects.get_or_create(customer = customer, product = product)
         
-    #     total = float(data['form']['total'])
-        
-    #     if total == order.get_cart_total:
-    #         order.complete = True
-    #     order.save()
-        
-    #     if order.shipping == True:
-    #         ShippingAddress.objects.create( 
-    #             customer = customer,
-    #             order = order,
-    #             address = data['shipping']['address'],
-    #             city = data['shipping']['city'],
-    #             state = data['shipping']['state'],
-    #             zipcode = data['shipping']['zipcode'],
-    #         )
-    # else:
-    #     pass
+        if data['action'] == 'add':
+            wishListItem.save()
+            response = 'Added to wish-list'
+        elif data['action'] == 'remove':
+            wishListItem.delete()
+            response = 'Removed from wish-list'
+    else:
+        pass
     
-    if data['action'] == 'add':
-        response = 'Added to wish-list'
-    elif data['action'] == 'remove':
-        response = 'Removed from wish-list'
     return JsonResponse(response, safe=False)
     

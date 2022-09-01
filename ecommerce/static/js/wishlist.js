@@ -3,18 +3,17 @@ console.log('wishListButtons.length = ', wishListButtons.length)
 
 for(i = 0; i < wishListButtons.length; i++){
     wishListButtons[i].addEventListener('click', function(){
-        var productId = this.dataset.product 
+        var productId = this.dataset.product
+        console.log("productId = " + productId)
 
         //for finding 'action', we have to get the clicked icon
-        var wishIcons = this.getElementsByClassName('wish-list-icon')
-        var action = wishIcons[0].dataset.action
-        var clickedIcon = wishIcons[0]
+        var addIcon = document.getElementById("add-btn-" + productId)
+        var action = ""
 
-        for(j = 0; j < wishIcons.length; j++){
-            if(wishIcons[j].classList.contains('hidden') == false){
-                action = wishIcons[j].dataset.action
-                clickedIcon = wishIcons[j]
-            }
+        if(addIcon.classList.contains("hidden")){
+            action = "remove"
+        }else{
+            action = "add"
         }
 
         console.log('productId:', productId, 'action:', action)
@@ -23,13 +22,13 @@ for(i = 0; i < wishListButtons.length; i++){
         if(user == 'AnonymousUser'){
             alert('Login needed!')
         }else{
-            updateWishList(productId, action, wishIcons)
+            updateWishList(productId, action)
         }
     })
 }
 
 
-function updateWishList(productId, action, wishIcons){
+function updateWishList(productId, action){
     console.log('User is authenticated, sending data...')
 
     url = '/update_wish_list/'
@@ -52,9 +51,9 @@ function updateWishList(productId, action, wishIcons){
 
     .then((data)=>{
         console.log('data:', data)
-        
-        var addIcon = wishIcons[0]
-        var removeIcon = wishIcons[1]
+        // location.reload()
+        var addIcon = document.getElementById("add-btn-" + productId)
+        var removeIcon = document.getElementById("remove-btn-" + productId)
 
         if(action == 'add'){
             addIcon.classList.add("hidden")
