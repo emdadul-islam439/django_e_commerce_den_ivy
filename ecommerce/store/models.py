@@ -32,11 +32,24 @@ class Product(models.Model):
     
     @property
     def isInWishlist(self):
-        wishListItems = self.wishlistitem_set.all()
-        if len(wishListItems) > 0:
+        wishlist_items = self.wishlistitem_set.all()
+        if len(wishlist_items) > 0:
             return "True" 
         else:
             return "False"
+    
+    @property
+    def wishlist_item_customer_list(self):
+        wishlist_items = self.wishlistitem_set.all()
+        print('wishlist_items: ', wishlist_items)
+        
+        customer_list = []
+        for wish_item in wishlist_items:
+            print('adding customer.user = ', wish_item.customer)
+            customer_list.append(wish_item.customer)
+        
+        print('returning...  user_list = ', customer_list)
+        return customer_list
     
     
     
