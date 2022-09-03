@@ -1,4 +1,5 @@
 import json
+from math import prod
 from . models import *
 
 def cookieCart(request):
@@ -101,3 +102,18 @@ def guestOrder(request, data):
         )
 
     return customer, order
+
+
+def getWishListItems(request):
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        wishListInfo = customer.wishlistitem_set.all()
+        wishListProducts = []
+        for wishListItem in wishListInfo:
+            wishListProducts.append(wishListItem.product)
+        print(f'wishListProducts  =  {wishListProducts}')
+    else:
+        wishListProducts = []
+    
+    return wishListProducts
+        
