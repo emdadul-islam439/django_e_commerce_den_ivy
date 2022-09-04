@@ -3,7 +3,7 @@
 {% block content %}
     <div class="row">
         {% for product in products %}
-            <div class="col-lg-4">
+            <div id='wish-item-product-id-{{product.id}}' class="col-lg-4">
                 <img class="thumbnail" src="{{product.imageURL}}">
                 <div class="box-element product">
                     <strong>{{product.name}}</strong>
@@ -41,4 +41,6 @@
         {% endfor %}
     </div>
 
+
+    <script type="text/javascript" src="{% static 'js/store.js' %}"></script>
 {% endblock content %}

@@ -100,30 +100,30 @@ def processOrder(request):
 
 
 
-# def updateWishList(request):
-#     print('Data: ', request.body)
+def updateWishList(request):
+    print('Data: ', request.body)
     
-#     data = json.loads(request.body)
-#     print(f"Data : {data}")
-#     response = ''
+    data = json.loads(request.body)
+    print(f"Data : {data}")
+    response = ''
     
-#     if request.user.is_authenticated:
-#         customer = request.user.customer
-#         product_id = data['productId']
-#         product = Product.objects.get(id = product_id)
-#         print(f'customer = {customer} | product_id = {product_id} | product.name = {product.name} ')
-#         wishListItem, created = WishListItem.objects.get_or_create(customer = customer, product = product)
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        product_id = data['productId']
+        product = Product.objects.get(id = product_id)
+        print(f'customer = {customer} | product_id = {product_id} | product.name = {product.name} ')
+        wishListItem, created = WishListItem.objects.get_or_create(customer = customer, product = product)
         
-#         if data['action'] == 'add':
-#             wishListItem.save()
-#             response = 'Added to wish-list'
-#         elif data['action'] == 'remove':
-#             wishListItem.delete()
-#             response = 'Removed from wish-list'
-#     else:
-#         pass
+        if data['action'] == 'add':
+            wishListItem.save()
+            response = 'Added to wish-list'
+        elif data['action'] == 'remove':
+            wishListItem.delete()
+            response = 'Removed from wish-list'
+    else:
+        pass
     
-#     return JsonResponse(response, safe=False)
+    return JsonResponse(response, safe=False)
      
     
 def wishList(request):
