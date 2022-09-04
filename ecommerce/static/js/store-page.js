@@ -1,8 +1,8 @@
-var wishListButtons = document.getElementsByClassName('wish-list')
-console.log('wishListButtons.length = ', wishListButtons.length)
+var wishItemButtons = document.getElementsByClassName('wish-list')
+console.log('wishListButtons.length = ', wishItemButtons.length)
 
-for(i = 0; i < wishListButtons.length; i++){
-    wishListButtons[i].addEventListener('click', function(){
+for(i = 0; i < wishItemButtons.length; i++){
+    wishItemButtons[i].addEventListener('click', function(){
         var productId = this.dataset.product
         console.log("productId = " + productId)
 
@@ -22,13 +22,13 @@ for(i = 0; i < wishListButtons.length; i++){
         if(user == 'AnonymousUser'){
             alert('Login needed!')
         }else{
-            updateWishList(productId, action)
+            updateWishListItem(productId, action)
         }
     })
 }
 
 
-function updateWishList(productId, action){
+function updateWishListItem(productId, action){
     console.log('User is authenticated, sending data...')
 
     url = '/update_wish_list/'

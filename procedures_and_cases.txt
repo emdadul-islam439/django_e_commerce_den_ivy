@@ -1568,6 +1568,82 @@
 
 
 
+## To work with "wishlist.html" add these code:
+    * var wishListButtons = document.getElementsByClassName('wishlist-class-wish-list')
+    * console.log('wishListButtons.length = ', wishListButtons.length)
+    * 
+    * for(i = 0; i < wishListButtons.length; i++){
+    *     wishListButtons[i].addEventListener('click', function(){
+    *         var productId = this.dataset.product
+    *         console.log("productId = " + productId)
+    * 
+    *         //for finding 'action', we have to get the clicked icon
+    *         var addIcon = document.getElementById("add-btn-" + productId)
+    *         var action = "remove"
+    * 
+    *         console.log('productId:', productId, 'action:', action)
+    * 
+    *         console.log('USER: ', user)
+    *         if(user == 'AnonymousUser'){
+    *             alert('Login needed!')
+    *         }else{
+    *             removeFromWishList(productId, action)
+    *         }
+    *     })
+    * }
+    * 
+    * 
+    * function removeFromWishList(productId, action){
+    *     console.log('User is authenticated, sending data...')
+    * 
+    *     url = '/update_wish_list/'
+    * 
+    *     fetch(url, {
+    *         method: 'POST',
+    *         headers: {
+    *             'Content-Type' : 'application/json',
+    *             'X-CSRFToken': csrftoken,
+    *         },
+    *         body: JSON.stringify({
+    *             'productId': productId, 'action': action 
+    *         })
+    *     })
+    * 
+    *     .then((response) => {
+    *         console.log('response: ', response)
+    *         return response.json()
+    *     })
+    * 
+    *     .then((data)=>{
+    *         console.log('data:', data)
+    *         // location.reload()
+    *         var clickedItemId = document.getElementById("wishlist-item-id-" + productId)
+    *         clickedItemId.classList.add("hidden")
+    * 
+    *         if(isAllItemHidden()){
+    *             showNoContentText()
+    *         }
+    *     })
+    * }
+    * 
+    * function isAllItemHidden(){
+    *     var wishlistItemList = document.getElementsByClassName("wishlist-page-item")
+    *     var hiddenItemCount = 0
+    *     for(var i = 0; i < wishlistItemList.length; i++){
+    *         if(wishlistItemList[i].classList.contains("hidden")){
+    *             hiddenItemCount += 1
+    *         }
+    *     }
+    *     
+    *     return wishlistItemList.length == hiddenItemCount
+    * }
+    * 
+    * function showNoContentText(){
+    *     document.getElementById("wishlist-item-id-items").classList.add("hidden")
+    *     document.getElementById("wishlist-item-id-no-content").classList.remove("hidden")
+    * }
+
+
 
 
 ---------------------------------------- PURE JS IS NOW OVER NOW --------------------------------------
@@ -2113,10 +2189,70 @@
 
 
 
+## Working for integrating "Wishlist" page
+    -> in "views.py" add this function:
+        * def wishList(request):
+        *    cookieData = cartData(request = request)
+        *    noOfCartItems = cookieData['noOfCartItems']
+        *        
+        *    products = getWishListItems(request)
+        *    # products = Product.objects.all()
+        *    print('PRODUCTs: ', products)
+        *    context={ 'products' : products, 'noOfCartItems':  noOfCartItems}
+        *    return render(request, 'store/wishlist.html', context)
+
+    -> in "urls.py" add this:
+        * urlpatterns = [
+        *     .....
+        *     path('wishlist/', views.wishList, name = 'wishlist'),
+        * ]
+    -> Create "wishlist.html" in the "/template/store/" folder:
+        -> add these lines:   
+            * {% extends 'store/main.html' %}
+            * {% load static %}
+            * {% block content %}
+            *     <div id="wishlist-item-id-items" class="row">
+            *         {% for product in products %}
+            *             <div id = 'wishlist-item-id-{{product.id}}' class="col-lg-4 wishlist-page-item">
+            *                 <img class="thumbnail" src="{{product.imageURL}}">
+            *                 <div class="box-element product">
+            *                     <strong>{{product.name}}</strong>
+            *                     <a data-product={{product.id}} class="text-decoration-none wishlist-class-wish-list" style="float:right">
+            *                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heartt" viewBox="0 0 16 16">
+            *                             <path id="wish-list-remove-btn-{{product.id}}" style="color:MediumSeaGreen" fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+            *                         </svg>
+            *                     </a>
+            * 
+            *                     <hr>
+            *             
+            *                     <button data-product={{product.id}} data-action="add"  class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
+            *                     <a class="btn btn-outline-success" href="#">View</a>
+            *                     <h4 style="display: inline-block; float: right"><strong>${{product.price|floatformat:2}}</strong></h4>
+            *                 </div>
+            *             </div>
+            *         {% endfor %}
+            *     </div>
+            *     <div id="wishlist-item-id-no-content" class="no-content-text hidden" style="float:center">
+            *         <h2>No content found! </h2>
+            *     </div>
+            * 
+            * 
+            *     {% if products|length > 0 %}
+            *         <script>
+            *             document.getElementById("wishlist-item-id-items").classList.remove("hidden")
+            *             document.getElementById("wishlist-item-id-no-content").classList.add("hidden")
+            *         </script>
+            *     {% else %}
+            *         <script>
+            *             document.getElementById("wishlist-item-id-items").classList.add("hidden")
+            *             document.getElementById("wishlist-item-id-no-content").classList.remove("hidden")
+            *         </script>
+            *     {% endif %}
+            * {% endblock content %}
 
 
 
-
+            
 
 --------------------------------- PayPal Integration (I couldn't implement that, because the current country is BD) ------------------------------------
 

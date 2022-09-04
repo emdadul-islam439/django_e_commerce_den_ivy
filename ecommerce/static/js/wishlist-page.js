@@ -1,4 +1,4 @@
-var wishListButtons = document.getElementsByClassName('wish-list')
+var wishListButtons = document.getElementsByClassName('wishlist-class-wish-list')
 console.log('wishListButtons.length = ', wishListButtons.length)
 
 for(i = 0; i < wishListButtons.length; i++){
@@ -8,13 +8,7 @@ for(i = 0; i < wishListButtons.length; i++){
 
         //for finding 'action', we have to get the clicked icon
         var addIcon = document.getElementById("add-btn-" + productId)
-        var action = ""
-
-        if(addIcon.classList.contains("hidden")){
-            action = "remove"
-        }else{
-            action = "add"
-        }
+        var action = "remove"
 
         console.log('productId:', productId, 'action:', action)
 
@@ -22,13 +16,13 @@ for(i = 0; i < wishListButtons.length; i++){
         if(user == 'AnonymousUser'){
             alert('Login needed!')
         }else{
-            updateWishList(productId, action)
+            removeFromWishList(productId, action)
         }
     })
 }
 
 
-function updateWishList(productId, action){
+function removeFromWishList(productId, action){
     console.log('User is authenticated, sending data...')
 
     url = '/update_wish_list/'
@@ -52,18 +46,30 @@ function updateWishList(productId, action){
     .then((data)=>{
         console.log('data:', data)
         // location.reload()
-        var addIcon = document.getElementById("add-btn-" + productId)
-        var removeIcon = document.getElementById("remove-btn-" + productId)
+        var clickedItemId = document.getElementById("wishlist-item-id-" + productId)
+        clickedItemId.classList.add("hidden")
 
-        if(action == 'add'){
-            addIcon.classList.add("hidden")
-            removeIcon.classList.remove("hidden")
-        }
-        else if(action == 'remove'){
-            addIcon.classList.remove('hidden')
-            removeIcon.classList.add('hidden')
+        if(isAllItemHidden()){
+            showNoContentText()
         }
     })
+}
+
+function isAllItemHidden(){
+    var wishlistItemList = document.getElementsByClassName("wishlist-page-item")
+    var hiddenItemCount = 0
+    for(var i = 0; i < wishlistItemList.length; i++){
+        if(wishlistItemList[i].classList.contains("hidden")){
+            hiddenItemCount += 1
+        }
+    }
+    
+    return wishlistItemList.length == hiddenItemCount
+}
+
+function showNoContentText(){
+    document.getElementById("wishlist-item-id-items").classList.add("hidden")
+    document.getElementById("wishlist-item-id-no-content").classList.remove("hidden")
 }
 
 
