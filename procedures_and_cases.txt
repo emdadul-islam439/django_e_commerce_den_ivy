@@ -618,7 +618,7 @@
             * {% endif %}
 
 
-## Creating Profile Page & adding "@login_required"
+## Creating Profile Page & adding "@login_required" [DONE]
     -> in 'templates/users/' folder create 'profile.html' file
         - add these lines of code:
             * {% extends "blog/base.html" %}
@@ -683,7 +683,7 @@
     
 
 
-## Creating MEDIA-DIRECTORY:
+## Creating MEDIA-DIRECTORY: [ALREADY DID]
     -> in 'django_project/settings.py' add these lines
         * MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
         * MEDIA_URL = "/media/"
@@ -693,7 +693,7 @@
     -> delete the previous 'profile_pics' directory [Did not finish, now finished it]
 
 
-## update 'templates/users/profile.html' [ALREADY DONE TWO COMMITS AGO, but didn't documented then]
+## update 'templates/users/profile.html' [DONE]
     * {% block content %}
     * <div class="content-section">
     *     <div class="media">
@@ -708,7 +708,7 @@
     * {% endblock content %}
 
 
-## adding 'media' path into the 'urlpatterns'
+## adding 'media' path into the 'urlpatterns': [DONE]
     - in the 'django_project/urls.py', add these lines
     * ....
     * from django.conf.urls.static import static
@@ -726,7 +726,7 @@
     -> don't FORGET to add a "Profile" object manually, to test the 'default.jpg' image's connection 
 
 
-## Create PROFILE along with CREATING USER- AUTOMATICALLY: 
+## Create PROFILE along with CREATING USER- AUTOMATICALLY: [DONE]
     - create 'signals.py' in 'django_project/users' folder 
     - add these codes:
         * from django.db.models.signals import post_save
@@ -754,7 +754,7 @@
         *       import users.signals
     
 
-## UPDATING models:
+## UPDATING models: [DONE]
     -> in 'users/forms.py' file, add these two form-class for updating user & profile:        
         * class UserUpdateForm(forms.ModelForm):
         *     email = forms.EmailField()
@@ -818,7 +818,7 @@
         *  </form>
 
 
-## adding author's profile-image into the home-page's posts 
+## adding author's profile-image into the home-page's posts: [NOT NEEDED]
     -> in the 'templates/blog/index.html' add this line
         * <article class="media content-section">
         *     <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">

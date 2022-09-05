@@ -7,9 +7,10 @@ class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, default='', related_name='customer', null=True)
     name = models.CharField(max_length=200, null=True)
     email = models.EmailField(max_length=200, null=True)
+    image = models.ImageField(default = 'default.jpg', upload_to = "profile_pics")
     
     def __str__(self) -> str:
-        return self.name
+        return self.user
     
 
 class Product(models.Model):

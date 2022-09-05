@@ -14,14 +14,14 @@
 
                             {% if request.user.customer in product.wishlist_item_customer_list %}
                                 <script>
-                                    console.log("request.user.customer = {{request.user.customer}}  ||   product.wishlist_item_customer_list = {{product.wishlist_item_customer_list}} ")
+                                    {% comment %} console.log("request.user.customer = {{request.user.customer}}  ||   product.wishlist_item_customer_list = {{product.wishlist_item_customer_list}} ") {% endcomment %}
                                     console.log("remove-btn: product.name = {{product.name}}   ||  product.isInWishList = '{{product.isInWishlist}}'")
                                     document.getElementById("remove-btn-{{product.id}}").classList.remove("hidden")
                                     document.getElementById("add-btn-{{product.id}}").classList.add("hidden")
                                 </script>
                             {% else %}
                                 <script>
-                                    console.log("request.user.customer = {{request.user.customer}}  ||   product.wishlist_item_customer_list = {{product.wishlist_item_customer_list}} ")
+                                    {% comment %} console.log("request.user.customer = {{request.user.customer}}  ||   product.wishlist_item_customer_list = {{product.wishlist_item_customer_list}} ") {% endcomment %}
                                     console.log("add-btn: product.name = {{product.name}}   ||  product.isInWishList = '{{product.isInWishlist}}'")
                                     document.getElementById("remove-btn-{{product.id}}").classList.add("hidden")
                                     document.getElementById("add-btn-{{product.id}}").classList.remove("hidden")
