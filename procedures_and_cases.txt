@@ -394,7 +394,7 @@
 
 
 
-## created USERS app:
+## created USERS app: [Created a "Customer" app]
     -> created the 'users' app by the command:
         * python manage.py startapp users 
     -> register the app in 'django_project/settings.py'
@@ -437,7 +437,7 @@
 
 
 
-## working with the REGISTRATION form data:
+## working with the REGISTRATION form data: [DONE]
     -> STEP-1: in 'templates/users/register.html', modify this 
         - from "{{ form }}" to "{{ form.as_p }}"
         - this will make the form nicer
@@ -455,7 +455,7 @@
 
         
 
-## Show 'success' message:
+## Show 'success' message: [DONE]
     -> after successfully submit data, show the 'success' message 
         - in the 'users/views.py' import 'django messages'
         * "from django.contrib import messages"
@@ -483,7 +483,7 @@
 
 
 
-## adding 'EMAIL' field into the USER CREATION FORM 
+## adding 'EMAIL' field into the USER CREATION FORM: [DONE]
     -> in the 'django_project/users' folder, create 'forms.py' file
     -> add these lines of code 
         * from django import forms
@@ -505,7 +505,7 @@
     -> That's it! the 'Email' Field is added successfully!
 
 
-## make the UserRegistrationForm Nicer:
+## make the UserRegistrationForm Nicer: [DONE]
     -> in the 'requirements.txt', add 'django-crispy-forms', and install it 
     -> in the 'django_project/settings.py' add 'crispy_forms' as app 
         * INSTALLED_APPS = [
