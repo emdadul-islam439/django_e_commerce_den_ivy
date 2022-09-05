@@ -603,7 +603,7 @@
             * ]
 
 
-## Improving UI/UX:
+## Improving UI/UX: [DONE]
     -> linking nav-bar's 'login' & 'register':
         - in 'templates/blog/base.html' modify these two lines 
         - From:
@@ -612,7 +612,7 @@
         - To:
             * {% if user.is_authenticated %}
             *     <a class="nav-item nav-link" href={%url 'logout'%}>Logout</a>
-            * {% else %}ss
+            * {% else %}
             *     <a class="nav-item nav-link" href={%url 'login'%}>Login</a>
             *     <a class="nav-item nav-link" href={%url 'register'%}>Register</a>
             * {% endif %}
