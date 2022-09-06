@@ -93,9 +93,10 @@
                         <img  id="cart-icon" src="{% static 'images/cart.png' %}">
                     </a>
                     <p id="cart-total">{{ noOfCartItems }}</p>
-            
+
+                    <a href={%url 'profile'%}> <img class="rounded-circle article-img ml-3" width="30" src="{{ request.user.customer.image.url }}"></a>
                 </div>
-            </div>
+            </div>-
         </nav>
 
          <div class="container">

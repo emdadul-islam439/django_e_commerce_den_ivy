@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from customers.forms import UserRegisterForm
+from customers.forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
+from store.utils import cartData
 
 # Create your views here.
 def register(request):
@@ -25,7 +26,7 @@ def profile(request):
                                 instance=request.user)
         p_form = ProfileUpdateForm(request.POST, 
                                    request.FILES, 
-                                   instance=request.user.profile)
+                                   instance=request.user.customer)
         
         if u_form.is_valid() and p_form.is_valid():
             u_form.save()
@@ -35,11 +36,15 @@ def profile(request):
             
     else:
         u_form = UserUpdateForm(instance=request.user)
-        p_form = ProfileUpdateForm(instance=request.user.profile)
+        p_form = ProfileUpdateForm(instance=request.user.customer)
     
+    
+    cookieData = cartData(request = request)
+    noOfCartItems = cookieData['noOfCartItems']
     context = {
         "u_form" : u_form,
-        "p_form" : p_form
+        "p_form" : p_form,
+        "noOfCartItems" : noOfCartItems
     }
     
-    return render(request, "users/profile.html", context)
+    return render(request, "customers/profile.html", context)
