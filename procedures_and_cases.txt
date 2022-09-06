@@ -2320,3 +2320,46 @@
         - Source: "https://developer.paypal.com/sdk/js/configuration/#disable-funding"
         - Example:
             * <script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID&disable-funding=credit,card"></script>
+
+
+
+
+
+
+
+------------------------------------------- Deploy on HEROKU ---------------------------------------------
+
+## Start Deploying on HEROKU:
+    - SOURCE: https://www.youtube.com/watch?v=XZoTukqekzY [Code with Tomi]
+    -> add 'gunicorn' and 'django-heroku' into the "requirements.txt"
+        * django
+        * django-crispy-forms
+        * Pillow
+        * django-heroku
+        * gunicorn
+    -> Create "runtime.txt" file and write "python-version"
+        - first write the command "python --version" in the commandline
+        - copy-paste the output with hyphene (-)
+        * Python-3.10.4 [rememebr to add hyphene]
+
+    -> Create "Procfile"
+        - Write:
+            * 
+    
+    -> in the "settings.py" add these lines:
+        - First Step:
+            * import django_heroku
+            * import dj_database_url
+        
+        - Second Step:
+            * STATIC_URL = 'static/'
+            ----- after this line, write these lines -----
+            * STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+            * STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+            * django_heroku.settings(locals())
+
+        - Third Step:
+            - From:
+                * ALLOWED_HOSTS = []
+            - To:
+                * ALLOWED_HOSTS = ['*']
