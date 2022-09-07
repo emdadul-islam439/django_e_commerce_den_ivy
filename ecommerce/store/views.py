@@ -136,3 +136,8 @@ def wishList(request):
     context={ 'products' : products, 'noOfCartItems':  noOfCartItems}
     return render(request, 'store/wishlist.html', context)
     # return HttpResponse("HI, this is the wishlist page")
+    
+
+def productDetails(request):
+    context = {}
+    return render(request, 'store/product-details.html', context)
