@@ -2363,3 +2363,10 @@
                 * ALLOWED_HOSTS = []
             - To:
                 * ALLOWED_HOSTS = ['*']
+
+
+
+    -> The output was:
+        * Creating ⬢ ecommerce-den-ivy... done
+          https://ecommerce-den-ivy.herokuapp.com/ | https://git.heroku.com/ecommerce-den-ivy.git
+        * 
