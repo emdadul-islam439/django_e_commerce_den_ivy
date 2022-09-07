@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from store import views
+from store.views import ProductDetailView
 
 urlpatterns = [
     path('', views.store, name = 'store'),
@@ -10,5 +11,5 @@ urlpatterns = [
     path('process_order/', views.processOrder, name = 'process_order'),
     path('update_wish_list/', views.updateWishList, name = 'update_wish_list'),
     path('wishlist/', views.wishList, name = 'wishlist'),
-    path('product-details/', views.productDetails, name = 'producut-details'),
+    path('product-details/<int:pk>', ProductDetailView.as_view(), name = 'producut-details'),
 ]

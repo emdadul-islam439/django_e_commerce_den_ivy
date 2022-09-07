@@ -6,6 +6,7 @@ from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import datetime
 from . utils import cartData, guestOrder, cookieCart, getWishListItems
+from django.views.generic import DetailView
 
 # Create your views here.
 def store(request):
@@ -136,8 +137,7 @@ def wishList(request):
     context={ 'products' : products, 'noOfCartItems':  noOfCartItems}
     return render(request, 'store/wishlist.html', context)
     # return HttpResponse("HI, this is the wishlist page")
-    
 
-def productDetails(request):
-    context = {}
-    return render(request, 'store/product-details.html', context)
+class ProductDetailView(DetailView):
+    template_name: str = "store/product-details.html"
+    model = Product
