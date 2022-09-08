@@ -138,6 +138,34 @@ def wishList(request):
     return render(request, 'store/wishlist.html', context)
     # return HttpResponse("HI, this is the wishlist page")
 
+
+
 class ProductDetailView(DetailView):
     template_name: str = "store/product-details.html"
+    context_object_name: str = "product"
     model = Product
+    
+    def get_context_data(self,*args, **kwargs):
+        context = super(ProductDetailView, self).get_context_data(*args,**kwargs)
+        context['item'] = self.item
+        context['noOfCartItems'] = self.noOfCartItems
+        return context
+    
+    
+    def get(self, request, *args, **kwargs):
+        self.cookieData = cartData(request = request)
+        self.noOfCartItems = self.cookieData['noOfCartItems']
+        self.items = self.cookieData['items']
+        self.product_id = self.kwargs.get('pk')
+        
+        found_item = False
+        for item in self.items:
+            if item.product.id == self.product_id:
+                self.item = item
+                found_item = True
+                break
+        
+        if not found_item:
+            self.item = "NONE"
+        print(f'product_id = {self.product_id}  item = {self.item},  noOfCartItems = {self.noOfCartItems}')
+        return super(ProductDetailView, self).get(request, *args, **kwargs)
