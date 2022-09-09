@@ -60,3 +60,14 @@ def wishList(request):
     context={ 'products' : products, 'noOfCartItems':  noOfCartItems}
     return render(request, 'customers/wishlist.html', context)
     # return HttpResponse("HI, this is the wishlist page")
+    
+    
+def orderList(request):
+    # cookieData = cartData(request = request)
+    # noOfCartItems = cookieData['noOfCartItems']
+        
+    # products = getWishListItems(request)
+    # # products = Product.objects.all()
+    # print('PRODUCTs: ', products)
+    # context={ 'products' : products, 'noOfCartItems':  noOfCartItems}
+    return render(request, 'customers/order-list.html')
