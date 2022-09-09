@@ -93,10 +93,20 @@
                         <img  id="cart-icon" src="{% static 'images/cart.png' %}">
                     </a>
                     <p id="cart-total">{{ noOfCartItems }}</p>
-
-                    <a href={%url 'profile'%}> <img class="rounded-circle article-img ml-3" width="30" src="{{ request.user.customer.image.url }}"></a>
                 </div>
-            </div>-
+                
+                <div class="nav-item dropdown p-0 m-0">
+                    <a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 
+                        <img class="rounded-circle article-img" width="30" src="{{ request.user.customer.image.url }}">
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item"  href={%url 'profile'%}>Profile</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/services">My Orders</a>
+                        <a class="dropdown-item" href="/services">My Wishlist</a>
+                    </div>
+                </li>
+            </div>
         </nav>
 
          <div class="container">
