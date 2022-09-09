@@ -44,7 +44,8 @@
                     <a id="details-page-go-to-cart-page" class="btn btn-warning" href={%url 'cart'%}  style="width:100%;"><span style="margin-right:20px" class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> GO TO CART PAGE</a>
                 </div>
                 <div class="details-page-add-to-wishlist" style="padding-bottom:20px; flex:1">
-                    <button id="details-page-add-to-wishlist" class="btn btn-secondary"></span>ADD TO WISHLIST</button>
+                    <button id="add-btn-{{product.id}}" class="btn btn-info"></span>ADD TO WISHLIST</button>
+                    <button id="remove-btn-{{product.id}}" class="btn btn-secondary"></span>REMOVE FROM WISHLIST</button>
                 </div>
             </div>                                        
         </div> 
@@ -84,6 +85,39 @@
         document.getElementById("details-page-go-to-cart-page").classList.remove('hidden')
     </script>
 {% endif %}
+
+
+<script>
+    var addToWishListBtn = document.getElementById("add-btn-{{product.id}}")
+    var removeFromWishListBtn = document.getElementById("remove-btn-{{product.id}}")
+
+
+    {% if isInWishlist %}
+        hideAddBtn()
+    {% else %}
+        showAddBtn()
+    {% endif %}
+
+
+    addToWishListBtn.addEventListener("click", function(){
+        hideAddBtn()
+        updateWishListItem({{product.id}}, "add")
+    })
+    removeFromWishListBtn.addEventListener("click", function(){
+        showAddBtn()
+        updateWishListItem({{product.id}}, "remove")
+    })
+
+    function showAddBtn(){
+        addToWishListBtn.classList.remove("hidden")
+        removeFromWishListBtn.classList.add("hidden")
+    }
+
+    function hideAddBtn(){
+        addToWishListBtn.classList.add("hidden")
+        removeFromWishListBtn.classList.remove("hidden")
+    }
+</script>
 
 
 <link rel="stylesheet" type="text/css" href="{% static 'css/product-details.css' %}">

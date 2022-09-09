@@ -1,3 +1,4 @@
+from itertools import product
 import json
 from urllib import response
 from django.shortcuts import render
@@ -149,6 +150,7 @@ class ProductDetailView(DetailView):
         context = super(ProductDetailView, self).get_context_data(*args,**kwargs)
         context['item'] = self.item
         context['noOfCartItems'] = self.noOfCartItems
+        context['isInWishlist'] = self.is_in_wishlist
         return context
     
     
@@ -157,6 +159,8 @@ class ProductDetailView(DetailView):
         self.noOfCartItems = self.cookieData['noOfCartItems']
         self.items = self.cookieData['items']
         self.product_id = self.kwargs.get('pk')
+        self.user_wishlist = WishListItem.objects.filter(product__id = self.product_id, customer = request.user.customer)
+        self.is_in_wishlist = len(self.user_wishlist) > 0
         
         found_item = False
         for item in self.items:
@@ -167,5 +171,5 @@ class ProductDetailView(DetailView):
         
         if not found_item:
             self.item = "NONE"
-        print(f'product_id = {self.product_id}  item = {self.item},  noOfCartItems = {self.noOfCartItems}')
+        print(f'product_id = {self.product_id}  item = {self.item},  noOfCartItems = {self.noOfCartItems},  user_wishlist = {self.user_wishlist}')
         return super(ProductDetailView, self).get(request, *args, **kwargs)
