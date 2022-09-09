@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row" style="display:flex;">
         <div class="column item-photo" style="flex:1;">
-            <img class="mr-2 p-2" style="max-width:100%;" src="{{item.product.imageURL}}" />
+            <img class="mr-2 p-2" style="max-width:100%;" src="{{product.imageURL}}" />
         </div>
         <div class="column" style="flex:2; border:0px solid gray width:50%">
             <!-- Product title-subTitle -->
@@ -31,17 +31,17 @@
             <div id="details-page-quantity" class="section" style="padding-bottom:20px; margin-top:20px;">
                 <h6 class="title-attr"><small>QUANTITY</small></h6>                    
                 <div>
-                    <div class="btn-minus pt-1 pb-0"><h6> - </h6></div>
+                    <div data-product={{product.id}} data-action="remove" class="btn-minus pt-1 pb-0 update-cart"><h6> - </h6></div>
                     <input value="{{item.quantity}}" />
-                    <div class="btn-plus pt-1 pb-0"><h6> + </h6></div>
+                    <div data-product={{product.id}} data-action="add"  class="btn-plus pt-1 pb-0 update-cart"><h6> + </h6></div>
                 </div>
             </div>     
 
             <!-- quantity -->
             <div class = "container pl-0" style="display:flex; margin-top:20px;">
                 <div class="section" style="padding-bottom:20px; flex:1;">
-                    <button id="details-page-add-to-cart" class="btn btn-success"><img  id="cart-icon" src="{% static 'images/cart.png' %}"><span style="margin-right:10px" class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> ADD TO CART</button>
-                    <button id="details-page-go-to-cart-page" class="btn btn-success hidden"><span style="margin-right:20px" class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> GO TO CART PAGE</button>
+                    <button id="details-page-add-to-cart" data-product={{product.id}} data-action="add" class="btn btn-success update-cart"><img  id="cart-icon" src="{% static 'images/cart.png' %}"><span style="margin-right:10px" class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> ADD TO CART</button>
+                    <a id="details-page-go-to-cart-page" class="btn btn-warning" href={%url 'cart'%}  style="width:100%;"><span style="margin-right:20px" class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> GO TO CART PAGE</a>
                 </div>
                 <div class="details-page-add-to-wishlist" style="padding-bottom:20px; flex:1">
                     <button id="details-page-add-to-wishlist" class="btn btn-secondary"></span>ADD TO WISHLIST</button>
@@ -73,9 +73,16 @@
     <script>
         document.getElementById("details-page-total-price-section-id").classList.add('hidden')
         document.getElementById("details-page-quantity").classList.add('hidden')
+
+        document.getElementById("details-page-add-to-cart").classList.remove('hidden')
+        document.getElementById("details-page-go-to-cart-page").classList.add('hidden')
     </script>
 {% else %}
-    <script> console.log("item = ", {{item}}) </script>
+    <script> 
+        {% comment %} console.log("item = ", {{item}})  {% endcomment %}
+        document.getElementById("details-page-add-to-cart").classList.add('hidden')
+        document.getElementById("details-page-go-to-cart-page").classList.remove('hidden')
+    </script>
 {% endif %}
 
 
