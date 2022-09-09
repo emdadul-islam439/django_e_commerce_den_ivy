@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from customers.forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
-from store.utils import cartData
+from store.utils import cartData, getWishListItems
 
 # Create your views here.
 def register(request):
@@ -48,3 +48,15 @@ def profile(request):
     }
     
     return render(request, "customers/profile.html", context)
+     
+    
+def wishList(request):
+    cookieData = cartData(request = request)
+    noOfCartItems = cookieData['noOfCartItems']
+        
+    products = getWishListItems(request)
+    # products = Product.objects.all()
+    print('PRODUCTs: ', products)
+    context={ 'products' : products, 'noOfCartItems':  noOfCartItems}
+    return render(request, 'customers/wishlist.html', context)
+    # return HttpResponse("HI, this is the wishlist page")
