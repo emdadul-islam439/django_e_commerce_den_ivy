@@ -107,14 +107,25 @@
         </nav>
 
          <div class="container">
-            {% if messages %}
+            {% comment %} {% if messages %}
               {% for message in messages %}
                 <div class = "alert alert-{{message.tags}}">
                   {{ message }}
                 </div>
               {% endfor %}
+            {% endif %} {% endcomment %}
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-success alert-dismissible fade show my-0" role="alert">
+                        <strong>{{message}}</strong>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
             {% endif %}
-            <br>
+
             {% block content %}
 
             {% endblock content %}

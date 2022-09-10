@@ -1,13 +1,12 @@
-from itertools import product
 import json
-from urllib import response
 from django.shortcuts import render
-from store.models import Order, Product, OrderItem, ShippingAddress, Customer, WishListItem
-from django.http import JsonResponse, HttpResponse
+from store.models import Order, Product, OrderItem, ShippingAddress, WishListItem
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import datetime
 from . utils import cartData, guestOrder, cookieCart, getWishListItems
 from django.views.generic import DetailView
+from django.contrib import messages
 
 # Create your views here.
 def store(request):
@@ -26,6 +25,8 @@ def cart(request):
     items = cookieData['items']
     
     context={ 'items': items, 'order': order, 'noOfCartItems':  noOfCartItems }
+    if not request.user.is_authenticated:
+        messages.success(request, "Guest Checkout Feature!! You can now order without Login into the site! If all the cart-items are digital, you will not have to give your shipping address also!")
     return render(request, 'store/cart.html', context)
 
 
@@ -36,6 +37,8 @@ def checkout(request):
     items = cookieData['items']
     
     context={ 'items': items, 'order': order, 'noOfCartItems':  noOfCartItems }
+    if not request.user.is_authenticated:
+        messages.success(request, "You can now order from us without Login into the site!")
     return render(request, 'store/checkout.html', context)
 
 
