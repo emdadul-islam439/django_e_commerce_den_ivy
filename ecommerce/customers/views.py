@@ -1,9 +1,11 @@
+from operator import attrgetter
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from customers.forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from store.utils import cartData, getWishListItems
-from store.models import Order
+from store.models import Order, OrderItem
+from django.views.generic import DetailView
 
 # Create your views here.
 def register(request):
@@ -62,12 +64,48 @@ def wishList(request):
     return render(request, 'customers/wishlist.html', context)
     # return HttpResponse("HI, this is the wishlist page")
     
-    
+
+@login_required 
 def orderList(request):
     cookieData = cartData(request = request)
     noOfCartItems = cookieData['noOfCartItems']
         
-    orders = Order.objects.filter(customer = request.user.customer)
+    orders = Order.objects.order_by('-id').filter(customer = request.user.customer)
+    # orders.sort(key=attrgetter('id'), reverse=True)
     print('ORDERS: ', orders)
     context={ 'orders' : orders, 'noOfCartItems':  noOfCartItems}
     return render(request, 'customers/order-list.html', context)
+    
+
+def orderDetails(request):
+    cookieData = cartData(request = request)
+    noOfCartItems = cookieData['noOfCartItems']
+        
+    orders = Order.objects.order_by('-id').filter(customer = request.user.customer)
+    # orders.sort(key=attrgetter('id'), reverse=True)
+    print('ORDERS: ', orders)
+    context={ 'orders' : orders, 'noOfCartItems':  noOfCartItems}
+    return render(request, 'customers/order-list.html', context)
+
+
+class OrderDetailView(DetailView):
+    template_name: str = "customers/order-details.html"
+    context_object_name: str = "order"
+    model = Order
+    
+    def get_context_data(self,*args, **kwargs):
+        context = super(OrderDetailView, self).get_context_data(*args,**kwargs)
+        context['items'] = self.items
+        context['noOfCartItems'] = self.noOfCartItems
+        return context
+    
+    
+    def get(self, request, *args, **kwargs):
+        self.cookieData = cartData(request = request)
+        self.noOfCartItems = self.cookieData['noOfCartItems']
+        self.order_id = self.kwargs.get('pk')
+        self.items = OrderItem.objects.filter(order__id = self.order_id)
+        
+        
+        print(f'order_id = {self.order_id}  items = {self.items},  noOfCartItems = {self.noOfCartItems}')
+        return super(OrderDetailView, self).get(request, *args, **kwargs)   
