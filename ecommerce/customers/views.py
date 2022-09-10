@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from customers.forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from store.utils import cartData, getWishListItems
+from store.models import Order
 
 # Create your views here.
 def register(request):
@@ -63,11 +64,10 @@ def wishList(request):
     
     
 def orderList(request):
-    # cookieData = cartData(request = request)
-    # noOfCartItems = cookieData['noOfCartItems']
+    cookieData = cartData(request = request)
+    noOfCartItems = cookieData['noOfCartItems']
         
-    # products = getWishListItems(request)
-    # # products = Product.objects.all()
-    # print('PRODUCTs: ', products)
-    # context={ 'products' : products, 'noOfCartItems':  noOfCartItems}
-    return render(request, 'customers/order-list.html')
+    orders = Order.objects.filter(customer = request.user.customer)
+    print('ORDERS: ', orders)
+    context={ 'orders' : orders, 'noOfCartItems':  noOfCartItems}
+    return render(request, 'customers/order-list.html', context)
