@@ -25,6 +25,12 @@
                                 <h5>Status: <strong> Not Completed </strong></h5>
                             {% endif %}
                         </td>
+
+                        {% if order.complete %}
+                            <td style="border:0; padding-top:0;">
+                                <h5>Completed: <strong> {{ order.date_completed|date:"F d, Y" }} </strong></h5>
+                            </td>
+                        {% endif %}
                     </table>
                 </div>
             {% endif %}

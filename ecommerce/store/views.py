@@ -87,6 +87,7 @@ def processOrder(request):
     
     if total == order.get_cart_total:
         order.complete = True
+        order.date_completed = datetime.datetime(2015, 10, 9, 23, 55, 59, 342380)
     order.save()
     
     if order.shipping == True:
