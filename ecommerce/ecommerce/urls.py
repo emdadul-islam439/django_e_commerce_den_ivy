@@ -29,7 +29,7 @@ urlpatterns = [
     path('order-details/<int:pk>', customer_views.OrderDetailView.as_view(), name = 'order-details'),
     path('login/', auth_views.LoginView.as_view(template_name = "customers/login.html"), name = "login"),
     path('logout/', auth_views.LogoutView.as_view(template_name = "customers/logout.html"), name = "logout"),
-    path('', include('store.urls'))
+    path("", include("store.urls"))
 ]
  
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -4,9 +4,26 @@ from django.contrib.auth.decorators import login_required
 from customers.forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from store.utils import cartData, getWishListItems
 from store.models import Order, OrderItem
+from customers.models import AdminUser
 from django.views.generic import DetailView
+from store import views as store_views
+
 
 # Create your views here.
+def redirectUser(request):
+    print('IN RE-DIRECT-USER')
+    admin_users = AdminUser.objects.all()
+    print(f'admin_users = {admin_users}')
+    
+    for admin in admin_users:
+        print(f'admin.id = {admin.id}')
+        print('request.user.id = ', request.user.id)
+        if request.user.id == admin.id:
+            return redirect('admin/', permanent= True)
+    return redirect('store/', parmanent= True)
+    
+    
+
 def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
