@@ -152,12 +152,14 @@ class ProductDetailView(DetailView):
         self.noOfCartItems = self.cookieData['noOfCartItems']
         self.items = self.cookieData['items']
         self.product_id = self.kwargs.get('pk')
-        self.user_wishlist = WishListItem.objects.filter(product__id = self.product_id, customer = request.user.customer)
+        self.user_wishlist = [] if (request.user.is_anonymous) else WishListItem.objects.filter(product__id = self.product_id, customer = request.user.customer)
         self.is_in_wishlist = len(self.user_wishlist) > 0
         
         found_item = False
         for item in self.items:
-            if item.product.id == self.product_id:
+            print(f'type(item) = {type(item)}  type(product_id) = {type(self.product_id)}')
+            item_product_id = item.product.id if(request.user.is_authenticated) else item['product']['id']
+            if item_product_id == self.product_id:
                 self.item = item
                 found_item = True
                 break
