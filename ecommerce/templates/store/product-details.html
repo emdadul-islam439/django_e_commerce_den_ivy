@@ -40,7 +40,7 @@
             <!-- quantity -->
             <div class = "container pl-0" style="display:flex; margin-top:20px;">
                 <div class="section" style="padding-bottom:20px; flex:1;">
-                    <button id="details-page-add-to-cart" data-product={{product.id}} data-action="add" class="btn btn-success update-cart"><img  id="cart-icon" src="{% static 'images/cart.png' %}"><span style="margin-right:10px" class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> ADD TO CART</button>
+                    <button id="details-page-add-to-cart" data-product={{product.id}} data-action="add" class="btn btn-success btn-add-to-cart update-cart"><img  id="cart-icon" src="{% static 'images/cart.png' %}"><span style="margin-right:10px" class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> ADD TO CART</button>
                     <a id="details-page-go-to-cart-page" class="btn btn-warning" href={%url 'cart'%}  style="width:100%;"><span style="margin-right:20px" class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> GO TO CART PAGE</a>
                 </div>
                 <div class="details-page-add-to-wishlist" style="padding-bottom:20px; flex:1">

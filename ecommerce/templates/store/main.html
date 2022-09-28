@@ -94,7 +94,7 @@
                 
                 <div class="nav-item dropdown p-0 m-0">
                     <a class="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 
-                        <img class="rounded-circle article-img" width="30" src="{{ request.user.customer.image.url }}">
+                        <img id="profile-icon" class="rounded-circle article-img" src="{{ request.user.customer.image.url }}">
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item"  href={%url 'profile'%}>Profile</a>
