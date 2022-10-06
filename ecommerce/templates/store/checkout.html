@@ -61,16 +61,16 @@
                     </div>
                 {% endfor %}
 
-                <h5>Items:   {{order.get_number_of_items}}</h5>
-                <h5>Total:   ${{order.get_cart_total|floatformat:2}}</h5>
+                <h5>Items:   {{cart.get_number_of_items}}</h5>
+                <h5>Total:   ${{cart.get_cart_total|floatformat:2}}</h5>
             </div>
         </div>
     </div>
 
 
     <script type="text/javascript">
-        var shipping = '{{order.shipping}}'
-        var total = '{{order.get_cart_total}}'
+        var shipping = '{{cart.shipping}}'
+        var total = '{{cart.get_cart_total}}'
 
         if(shipping == 'False'){
             document.getElementById("shipping-info").innerHTML = ''

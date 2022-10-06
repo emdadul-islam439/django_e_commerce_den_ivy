@@ -1386,7 +1386,7 @@
     -> or, (2) you can set "classList.add('hidden')"
         - In "checkout.html", we've written this code:
         *  <script type="text/javascript">
-        *      var shipping = '{{order.shipping}}'
+        *      var shipping = '{{cart.shipping}}'
         *      if(shipping == 'False'){
         *          document.getElementById("shipping-info").innerHTML = '' ---------- (1)
         *      }
@@ -1667,8 +1667,8 @@
             *      
             *      customer = request.user.customer
             *      product = Product.objects.get(id = productId)
-            *      order, created = Order.objects.get_or_create(customer = customer, complete = False)
-            *      cartItem, created = CartItem.objects.get_or_create(order=order, product=product)
+            *      cart, created = Cart.objects.get_or_create(customer = customer, complete = False)
+            *      cartItem, created = CartItem.objects.get_or_create(cart=cart, product=product)
             *      
             *      
             *      if action == 'add':
@@ -1696,16 +1696,16 @@
             * def store(request):
             *      if request.user.is_authenticated:
             *          customer = request.user.customer
-            *          order, created = Order.objects.get_or_create(customer = customer, complete = False)
-            *          items = order.cartItem.all()
-            *          noOfCartItems = order.get_number_of_items
+            *          cart, created = Cart.objects.get_or_create(customer = customer, complete = False)
+            *          items = cart.cartItem.all()
+            *          noOfCartItems = cart.get_number_of_items
             *      else:
             *          items = []
-            *          order = {
+            *          cart = {
             *              'get_cart_total': 0,
             *              'get_number_of_items': 0
             *          }
-            *          noOfCartItems = order['get_number_of_items']
+            *          noOfCartItems = cart['get_number_of_items']
             *          
             *      products = Product.objects.all()
             *      context={ 'products' : products, 'noOfCartItems':  noOfCartItems }
@@ -1717,10 +1717,10 @@
                 * def cart/checkout(request):
                 *      if request.user.is_authenticated:
                 *          ....
-                *          noOfCartItems = order.get_number_of_items
+                *          noOfCartItems = cart.get_number_of_items
                 *      else:
                 *          ....
-                *          noOfCartItems = order['get_number_of_items']
+                *          noOfCartItems = cart['get_number_of_items']
             - add:
                 * context={ ... 'noOfCartItems':  noOfCartItems }
     
@@ -1747,9 +1747,9 @@
         * @property
         * def shipping(self):
         *     shipping = False
-        *     order_items = self.cartItem_set.all()
+        *     cart_items = self.cartItem_set.all()
         *     
-        *     for item in order_items:
+        *     for item in cart_items:
         *         if item.product.digital == False:
         *             shipping = True
         *             break
@@ -1759,14 +1759,14 @@
         - in 'def store()', 'def cart()', 'def checkout()', add these:
             * else:
             *   ....
-            *   order = {
+            *   cart = {
             *        ....
             *        'shipping' = False
             *    }
         
     -> in "checkout.html" add this JS code:
         * <script type="text/javascript">
-        *     var shipping = '{{order.shipping}}'
+        *     var shipping = '{{cart.shipping}}'
         *     if(shipping == 'False'){
         *         document.getElementById("shipping-info").innerHTML = ''
         *     }
@@ -1799,18 +1799,18 @@
         *     
         *     if request.user.is_authenticated:
         *         customer = request.user.customer
-        *         order, created = Order.objects.get_or_create(customer = customer, complete = False)
+        *         cart, created = Cart.objects.get_or_create(customer = customer, complete = False)
         *         total = float(data['form']['total'])
-        *         order.transaction_id = transaction_id
+        *         cart.transaction_id = transaction_id
         *         
-        *         if total == order.get_cart_total:
-        *             order.complete = True
-        *         order.save()
+        *         if total == cart.get_cart_total:
+        *             cart.complete = True
+        *         cart.save()
         *         
-        *         if order.shipping == True:
+        *         if cart.shipping == True:
         *             ShippingAddress.objects.create(
         *                 customer = customer,
-        *                 order = order,
+        *                 cart = cart,
         *                 address = data['shipping']['address'],
         *                 city = data['shipping']['city'],
         *                 state = data['shipping']['state'],
@@ -1827,7 +1827,7 @@
     -> in "checkout.html", modify '<script>' section:
         * <script type="text/javascript">
         *     ....
-        *     var total = '{{order.get_cart_total}}'
+        *     var total = '{{cart.get_cart_total}}'
         *     
         *     document.getElementById('make-payment').addEventListener('click', function(e){
         *         submitFormData()
@@ -1896,12 +1896,12 @@
         *            
         *        print('Cart: ', cart)
         *        items = []
-        *        order = {
+        *        cart = {
         *            'get_cart_total': 0,
         *            'get_number_of_items': 0,
         *            'shipping': False
         *        }
-        *        noOfCartItems = order['get_number_of_items']
+        *        noOfCartItems = cart['get_number_of_items']
         *        
         *        for id in cart:
         *            try:
@@ -1910,8 +1910,8 @@
         *                product = Product.objects.get(id= id)
         *                total = (product.price * cart[id]['quantity'])
         *
-        *                order['get_cart_total'] += total
-        *                order['get_number_of_items'] += cart[id]['quantity']
+        *                cart['get_cart_total'] += total
+        *                cart['get_number_of_items'] += cart[id]['quantity']
         *
         *                item = {
         *                    'product': {
@@ -1926,11 +1926,11 @@
         *                items.append(item)
         *
         *                if product.digital == False:
-        *                    order['shipping'] = True 
+        *                    cart['shipping'] = True 
         *            except:
         *                pass
         *    
-        *    context={ 'items': items, 'order': order, 'noOfCartItems':  noOfCartItems }
+        *    context={ 'items': items, 'cart': cart, 'noOfCartItems':  noOfCartItems }
         *    return render(request, 'store/cart.html', context)
         *
 
@@ -1954,7 +1954,7 @@
             *     ....... paste here from "views.py" file's 'def cart()' method .......
             *     return {
             *         'noOfCartItems': noOfCartItems, 
-            *         'order': order, 
+            *         'cart': cart, 
             *         'items': items
             *     }
 
@@ -1967,16 +1967,16 @@
             * def cart(request):
             *     if request.user.is_authenticated:
             *         customer = request.user.customer
-            *         order, created = Order.objects.get_or_create(customer = customer, complete = False)
-            *         items = order.cartItem_set.all()
-            *         noOfCartItems = order.get_number_of_items
+            *         cart, created = Cart.objects.get_or_create(customer = customer, complete = False)
+            *         items = cart.cartItem_set.all()
+            *         noOfCartItems = cart.get_number_of_items
             *     else:
             *         cookieData = cookieCart(request = request)
             *         noOfCartItems = cookieData['noOfCartItems']
-            *         order = cookieData['order']
+            *         cart = cookieData['cart']
             *         items = cookieData['items']
             * 
-            *     context={ 'items': items, 'order': order, 'noOfCartItems':  noOfCartItems }
+            *     context={ 'items': items, 'cart': cart, 'noOfCartItems':  noOfCartItems }
             *     return render(request, 'store/cart.html', context)
     
     -> follow this step for "def store()" and "def checkout()" functions also 
@@ -1994,7 +1994,7 @@
             *     ....... paste here from "views.py" file's 'def cart()' method .......
             *     return {
             *         'noOfCartItems': noOfCartItems, 
-            *         'order': order, 
+            *         'cart': cart, 
             *         'items': items
             *     }
 
@@ -2007,10 +2007,10 @@
             * def cart(request):
             *     cookieData = cartData(request = request)
             *     noOfCartItems = cookieData['noOfCartItems']
-            *     order = cookieData['order']
+            *     cart = cookieData['cart']
             *     items = cookieData['items']
             * 
-            *     context={ 'items': items, 'order': order, 'noOfCartItems':  noOfCartItems }
+            *     context={ 'items': items, 'cart': cart, 'noOfCartItems':  noOfCartItems }
             *     return render(request, 'store/cart.html', context)
     
     -> follow this step for "def store()" and "def checkout()" functions also 
@@ -2040,7 +2040,7 @@
         *         customer.name = name 
         *         customer.save()
         *         
-        *         order = Order.objects.create(
+        *         cart = Cart.objects.create(
         *             customer = customer,
         *             complete = False
         *         )
@@ -2050,7 +2050,7 @@
         *             
         *             cartItem = CartItem.objects.create(
         *                 product = product,
-        *                 order = order,
+        *                 cart = cart,
         *                 quantity = item['quantity']
         *             )
         *     return JsonResponse('Payment Completed...', safe=False)
@@ -2064,7 +2064,7 @@
         *     
         *     if request.user.is_authenticated:
         *         customer = request.user.customer
-        *         order, created = Order.objects.get_or_create(customer = customer, complete = False)
+        *         cart, created = Cart.objects.get_or_create(customer = customer, complete = False)
         *     else:
         *         print('User is not authenticated....')
         *         
@@ -2082,7 +2082,7 @@
         *         customer.name = name 
         *         customer.save()
         *         
-        *         order = Order.objects.create(
+        *         cart = cart.objects.create(
         *             customer = customer,
         *             complete = False
         *         )
@@ -2092,23 +2092,23 @@
         *             
         *             cartItem = CartItem.objects.create(
         *                 product = product,
-        *                 order = order,
+        *                 cart = cart,
         *                 quantity = item['quantity']
         *             )
         *         
         *     # STARTED-COPY from 'if' block------------------------ 
         *
         *     total = float(data['form']['total'])
-        *     order.transaction_id = transaction_id
+        *     cart.transaction_id = transaction_id
         *     
-        *     if total == order.get_cart_total:
-        *         order.complete = True
-        *     order.save()
+        *     if total == cart.get_cart_total:
+        *         cart.complete = True
+        *     cart.save()
         *     
-        *     if order.shipping == True:
+        *     if cart.shipping == True:
         *         ShippingAddress.objects.create( 
         *             customer = customer,
-        *             order = order,
+        *             cart = cart,
         *             address = data['shipping']['address'],
         *             city = data['shipping']['city'],
         *             state = data['shipping']['state'],
@@ -2139,7 +2139,7 @@
         *     customer.name = name 
         *     customer.save()
         *     
-        *     order = Order.objects.create(
+        *     cart = cart.objects.create(
         *         customer = customer,
         *         complete = False
         *     )
@@ -2149,11 +2149,11 @@
         *         
         *         cartItem = CartItem.objects.create(
         *             product = product,
-        *             order = order,
+        *             cart = cart,
         *             quantity = item['quantity']
         *         )
         *     
-        *     return customer, order
+        *     return customer, cart
 
     -> in "views.py" modify the code of "def processOrder(...)" function:
         *def processOrder(request):
@@ -2164,22 +2164,22 @@
         *     
         *     if request.user.is_authenticated:
         *         customer = request.user.customer
-        *         order, created = Order.objects.get_or_create(customer = customer, complete = False)
+        *         cart, created = Cart.objects.get_or_create(customer = customer, complete = False)
         *     else:
         *         #................... just added this line by removing all the codes from 'else' block..............................
-        *         customer, order = guestOrder(request= request, data= data) 
+        *         customer, cart = guestOrder(request= request, data= data) 
         *         
         *     total = float(data['form']['total'])
-        *     order.transaction_id = transaction_id
+        *     cart.transaction_id = transaction_id
         *     
-        *     if total == order.get_cart_total:
-        *         order.complete = True
-        *     order.save()
+        *     if total == cart.get_cart_total:
+        *         cart.complete = True
+        *     cart.save()
         *     
-        *     if order.shipping == True:
+        *     if cart.shipping == True:
         *         ShippingAddress.objects.create( 
         *             customer = customer,
-        *             order = order,
+        *             cart = cart,
         *             address = data['shipping']['address'],
         *             city = data['shipping']['city'],
         *             state = data['shipping']['state'],
@@ -2287,7 +2287,7 @@
         *  
         *          // Set up the transaction
         *          createOrder: function(data, actions) {
-        *              return actions.order.create({
+        *              return actions.cart.create({
         *                  purchase_units: [{
         *                      amount: {
         *                          value: '88.44'
@@ -2298,7 +2298,7 @@
         *  
         *          // Finalize the transaction
         *          onApprove: function(data, actions) {
-        *              return actions.order.capture().then(function(orderData) {
+        *              return actions.cart.capture().then(function(orderData) {
         *                  // Successful capture! For demo purposes:
         *                  console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
         *                  var transaction = orderData.purchase_units[0].payments.captures[0];

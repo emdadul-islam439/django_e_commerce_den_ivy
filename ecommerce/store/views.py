@@ -1,6 +1,6 @@
 import json
 from django.shortcuts import render
-from store.models import Order, Product, CartItem, ShippingAddress, WishListItem
+from store.models import Cart, Product, CartItem, ShippingAddress, WishListItem
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import datetime
@@ -21,10 +21,10 @@ def store(request):
 def cart(request):
     cookieData = cartData(request = request)
     noOfCartItems = cookieData['noOfCartItems']
-    order = cookieData['order']
+    cart = cookieData['cart']
     items = cookieData['items']
     
-    context={ 'items': items, 'order': order, 'noOfCartItems':  noOfCartItems }
+    context={ 'items': items, 'cart': cart, 'noOfCartItems':  noOfCartItems }
     if not request.user.is_authenticated:
         messages.success(request, "Guest Checkout Feature!! You can now order without Login into the site! If all the cart-items are digital, you will not have to give your shipping address also!")
     return render(request, 'store/cart.html', context)
@@ -33,10 +33,10 @@ def cart(request):
 def checkout(request):
     cookieData = cartData(request = request)
     noOfCartItems = cookieData['noOfCartItems']
-    order = cookieData['order']
+    cart = cookieData['cart']
     items = cookieData['items']
     
-    context={ 'items': items, 'order': order, 'noOfCartItems':  noOfCartItems }
+    context={ 'items': items, 'cart': cart, 'noOfCartItems':  noOfCartItems }
     if not request.user.is_authenticated:
         messages.success(request, "You can now order from us without Login into the site!")
     return render(request, 'store/checkout.html', context)
@@ -54,8 +54,8 @@ def UpdateItem(request):
     
     customer = request.user.customer
     product = Product.objects.get(id = productId)
-    order, created = Order.objects.get_or_create(customer = customer, complete = False)
-    cartItem, created = CartItem.objects.get_or_create(order=order, product=product)
+    cart, created = Cart.objects.get_or_create(customer = customer, complete = False)
+    cartItem, created = CartItem.objects.get_or_create(cart=cart, product=product)
     
     if action == 'add':
         cartItem.quantity += 1
@@ -81,24 +81,24 @@ def processOrder(request):
     
     if request.user.is_authenticated:
         customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer = customer, complete = False)
+        cart, created = Cart.objects.get_or_create(customer = customer, complete = False)
     else:
-        customer, order = guestOrder(request= request, data= data)
+        customer, cart = guestOrder(request= request, data= data)
         
     total = float(data['form']['total'])
-    order.transaction_id = transaction_id
+    cart.transaction_id = transaction_id
     
-    if total == order.get_cart_total:
-        order.complete = True
+    if total == cart.get_cart_total:
+        cart.complete = True
         now_time = datetime.datetime.now()
         print(f'now_time = {now_time}  type(now_time) = {type(now_time)}')
-        order.date_completed = now_time
-    order.save()
+        cart.date_completed = now_time
+    cart.save()
     
-    if order.shipping == True:
+    if cart.shipping == True:
         ShippingAddress.objects.create( 
             customer = customer,
-            order = order,
+            cart = cart,
             address = data['shipping']['address'],
             city = data['shipping']['city'],
             state = data['shipping']['state'],

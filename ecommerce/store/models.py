@@ -64,7 +64,7 @@ class Product(models.Model):
     
     
     
-class Order(models.Model):
+class Cart(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
     date_ordered = models.DateTimeField(auto_now_add=True)
     date_completed = models.DateTimeField(auto_now_add=True)
@@ -72,14 +72,14 @@ class Order(models.Model):
     transaction_id = models.CharField(max_length=100, null=True)
     
     def __str__(self) -> str:
-        return 'Order ID: {self.id}'
+        return 'Cart ID: {self.id}'
     
     @property
     def shipping(self):
         shipping = False
-        order_items = self.cartitem_set.all()
+        cart_items = self.cartitem_set.all()
         
-        for item in order_items:
+        for item in cart_items:
             if item.product.digital == False:
                 shipping = True
                 break
@@ -87,21 +87,21 @@ class Order(models.Model):
     
     @property
     def get_cart_total(self):
-        order_items = self.cartitem_set.all()
-        total = sum([item.get_total for item in order_items])
+        cart_items = self.cartitem_set.all()
+        total = sum([item.get_total for item in cart_items])
         return total 
     
     @property
     def get_number_of_items(self):
-        order_items = self.cartitem_set.all()
-        total = sum([item.quantity for item in order_items])
+        cart_items = self.cartitem_set.all()
+        total = sum([item.quantity for item in cart_items])
         return total 
         
     
     
 class CartItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
-    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True)
+    cart = models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True, blank=True)
     quantity = models.IntegerField(default=0, null=True, blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
     
@@ -115,7 +115,7 @@ class CartItem(models.Model):
 
 class ShippingAddress(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
-    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True)
+    cart = models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True, blank=True)
     address = models.CharField(max_length=200, null=True)
     city = models.CharField(max_length=200, null=True)
     state = models.CharField(max_length=200, null=True)

@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from customers.forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from store.utils import cartData, getWishListItems
-from store.models import Order, CartItem
+from store.models import Cart, CartItem
 from customers.models import AdminUser
 from django.views.generic import DetailView
 from store import views as store_views
@@ -86,7 +86,7 @@ def orderList(request):
     cookieData = cartData(request = request)
     noOfCartItems = cookieData['noOfCartItems']
         
-    orders = Order.objects.order_by('-id').filter(customer = request.user.customer)
+    orders = Cart.objects.order_by('-id').filter(customer = request.user.customer)
     # orders.sort(key=attrgetter('id'), reverse=True)
     print('ORDERS: ', orders)
     context={ 'orders' : orders, 'noOfCartItems':  noOfCartItems}
@@ -97,7 +97,7 @@ def orderDetails(request):
     cookieData = cartData(request = request)
     noOfCartItems = cookieData['noOfCartItems']
         
-    orders = Order.objects.order_by('-id').filter(customer = request.user.customer)
+    orders = Cart.objects.order_by('-id').filter(customer = request.user.customer)
     # orders.sort(key=attrgetter('id'), reverse=True)
     print('ORDERS: ', orders)
     context={ 'orders' : orders, 'noOfCartItems':  noOfCartItems}
@@ -107,7 +107,7 @@ def orderDetails(request):
 class OrderDetailView(DetailView):
     template_name: str = "customers/order-details.html"
     context_object_name: str = "order"
-    model = Order
+    model = Cart
     
     def get_context_data(self,*args, **kwargs):
         context = super(OrderDetailView, self).get_context_data(*args,**kwargs)
