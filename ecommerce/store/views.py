@@ -14,6 +14,7 @@ def store(request):
     noOfCartItems = cookieData['noOfCartItems']
         
     products = Product.objects.all()
+    print(f'........STORE PAGE......  noOfCartItems = {noOfCartItems}')
     context={ 'products' : products, 'noOfCartItems':  noOfCartItems}
     return render(request, 'store/store.html', context)
 

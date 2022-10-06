@@ -4,11 +4,11 @@ from . models import *
 
 def cookieCart(request):
     try:
-        cart = json.loads(request.COOKIES['cart'])
+        temp_cart = json.loads(request.COOKIES['cart'])
     except:
-        cart = {}
+        temp_cart = {}
             
-    print('Cart: ', cart)
+    print('temp_cart: ', temp_cart)
     items = []
     cart = {
         'get_cart_total': 0,
@@ -17,15 +17,15 @@ def cookieCart(request):
     }
     noOfCartItems = cart['get_number_of_items']
     
-    for id in cart:
+    for id in temp_cart:
         try:
-            noOfCartItems += cart[id]['quantity']
+            noOfCartItems += temp_cart[id]['quantity']
 
             product = Product.objects.get(id= id)
-            total = (product.price * cart[id]['quantity'])
+            total = (product.price * temp_cart[id]['quantity'])
 
             cart['get_cart_total'] += total
-            cart['get_number_of_items'] += cart[id]['quantity']
+            cart['get_number_of_items'] += temp_cart[id]['quantity']
 
             item = {
                 'product': {
@@ -34,7 +34,7 @@ def cookieCart(request):
                     'price': product.price,
                     'imageURL': product.imageURL
                 },
-                'quantity': cart[id]['quantity'],
+                'quantity': temp_cart[id]['quantity'],
                 'get_total': total
             }
             items.append(item)
