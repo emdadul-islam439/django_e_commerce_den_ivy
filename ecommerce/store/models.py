@@ -10,17 +10,20 @@ class Customer(models.Model):
     image = models.ImageField(default = 'default.png', upload_to = "profile_pics")
     
     def __str__(self) -> str:
-        return self.user.username
+        return str(self.user)
     
 
 class Product(models.Model):
     name = models.CharField(max_length=200, null=True)
     price = models.FloatField()
+    discount_price = models.FloatField(default=0.0)
     digital = models.BooleanField(default=False, null=True, blank=True)
     image = models.ImageField(null=True, blank=True)
+    order_limit = models.IntegerField(default=50)
     
     def __str__(self) -> str:
         return self.name
+  
     
     @property
     def imageURL(self):
@@ -31,6 +34,7 @@ class Product(models.Model):
         
         return url
     
+    
     @property
     def isInWishlist(self):
         wishlist_items = self.wishlistitem_set.all()
@@ -38,6 +42,7 @@ class Product(models.Model):
             return "True" 
         else:
             return "False"
+    
     
     @property
     def wishlist_item_customer_list(self):
@@ -52,6 +57,11 @@ class Product(models.Model):
         print('returning...  user_list = ', customer_list)
         return customer_list
     
+    @property
+    def get_product_price(self):
+        return self.price
+    
+    
     
     
 class Order(models.Model):
@@ -62,12 +72,12 @@ class Order(models.Model):
     transaction_id = models.CharField(max_length=100, null=True)
     
     def __str__(self) -> str:
-        return str(self.id)
+        return 'Order ID: {self.id}'
     
     @property
     def shipping(self):
         shipping = False
-        order_items = self.orderitem_set.all()
+        order_items = self.cartitem_set.all()
         
         for item in order_items:
             if item.product.digital == False:
@@ -77,23 +87,26 @@ class Order(models.Model):
     
     @property
     def get_cart_total(self):
-        order_items = self.orderitem_set.all()
+        order_items = self.cartitem_set.all()
         total = sum([item.get_total for item in order_items])
         return total 
     
     @property
     def get_number_of_items(self):
-        order_items = self.orderitem_set.all()
+        order_items = self.cartitem_set.all()
         total = sum([item.quantity for item in order_items])
         return total 
         
     
     
-class OrderItem(models.Model):
+class CartItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True)
     quantity = models.IntegerField(default=0, null=True, blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self) -> str:
+        return f'CartItem ID: {self.id}  ->   Name: {self.product.name}'
     
     @property
     def get_total(self):

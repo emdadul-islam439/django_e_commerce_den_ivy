@@ -1668,20 +1668,20 @@
             *      customer = request.user.customer
             *      product = Product.objects.get(id = productId)
             *      order, created = Order.objects.get_or_create(customer = customer, complete = False)
-            *      orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
+            *      cartItem, created = CartItem.objects.get_or_create(order=order, product=product)
             *      
             *      
             *      if action == 'add':
-            *          orderItem.quantity += 1
+            *          cartItem.quantity += 1
             *          response_message = 'Item was ADDED successfully'
             *      elif action == 'remove':
-            *          orderItem.quantity -= 1
+            *          cartItem.quantity -= 1
             *          response_message = 'Item was DELETED successfully'
             *      
-            *      orderItem.save()
+            *      cartItem.save()
             *      
-            *      if orderItem.quantity <= 0:
-            *          orderItem.delete()
+            *      if cartItem.quantity <= 0:
+            *          cartItem.delete()
             *      
             *      return JsonResponse(response_message, safe=False)
     
@@ -1697,7 +1697,7 @@
             *      if request.user.is_authenticated:
             *          customer = request.user.customer
             *          order, created = Order.objects.get_or_create(customer = customer, complete = False)
-            *          items = order.orderitem_set.all()
+            *          items = order.cartItem.all()
             *          noOfCartItems = order.get_number_of_items
             *      else:
             *          items = []
@@ -1747,7 +1747,7 @@
         * @property
         * def shipping(self):
         *     shipping = False
-        *     order_items = self.orderitem_set.all()
+        *     order_items = self.cartItem_set.all()
         *     
         *     for item in order_items:
         *         if item.product.digital == False:
@@ -1968,7 +1968,7 @@
             *     if request.user.is_authenticated:
             *         customer = request.user.customer
             *         order, created = Order.objects.get_or_create(customer = customer, complete = False)
-            *         items = order.orderitem_set.all()
+            *         items = order.cartItem_set.all()
             *         noOfCartItems = order.get_number_of_items
             *     else:
             *         cookieData = cookieCart(request = request)
@@ -2048,7 +2048,7 @@
         *         for item in items:
         *             product = Product.objects.get(id= item['product']['id'])
         *             
-        *             orderItem = OrderItem.objects.create(
+        *             cartItem = CartItem.objects.create(
         *                 product = product,
         *                 order = order,
         *                 quantity = item['quantity']
@@ -2090,7 +2090,7 @@
         *         for item in items:
         *             product = Product.objects.get(id= item['product']['id'])
         *             
-        *             orderItem = OrderItem.objects.create(
+        *             cartItem = CartItem.objects.create(
         *                 product = product,
         *                 order = order,
         *                 quantity = item['quantity']
@@ -2147,7 +2147,7 @@
         *     for item in items:
         *         product = Product.objects.get(id= item['product']['id'])
         *         
-        *         orderItem = OrderItem.objects.create(
+        *         cartItem = CartItem.objects.create(
         *             product = product,
         *             order = order,
         *             quantity = item['quantity']

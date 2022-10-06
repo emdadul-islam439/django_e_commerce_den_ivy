@@ -1,6 +1,6 @@
 import json
 from django.shortcuts import render
-from store.models import Order, Product, OrderItem, ShippingAddress, WishListItem
+from store.models import Order, Product, CartItem, ShippingAddress, WishListItem
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import datetime
@@ -55,19 +55,19 @@ def UpdateItem(request):
     customer = request.user.customer
     product = Product.objects.get(id = productId)
     order, created = Order.objects.get_or_create(customer = customer, complete = False)
-    orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
+    cartItem, created = CartItem.objects.get_or_create(order=order, product=product)
     
     if action == 'add':
-        orderItem.quantity += 1
+        cartItem.quantity += 1
         response_message = 'Item was ADDED successfully'
     elif action == 'remove':
-        orderItem.quantity -= 1
+        cartItem.quantity -= 1
         response_message = 'Item was DELETED successfully'
     
-    orderItem.save()
+    cartItem.save()
     
-    if orderItem.quantity <= 0:
-        orderItem.delete()
+    if cartItem.quantity <= 0:
+        cartItem.delete()
     
     return JsonResponse(response_message, safe=False)
 

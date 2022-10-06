@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from customers.forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from store.utils import cartData, getWishListItems
-from store.models import Order, OrderItem
+from store.models import Order, CartItem
 from customers.models import AdminUser
 from django.views.generic import DetailView
 from store import views as store_views
@@ -120,7 +120,7 @@ class OrderDetailView(DetailView):
         self.cookieData = cartData(request = request)
         self.noOfCartItems = self.cookieData['noOfCartItems']
         self.order_id = self.kwargs.get('pk')
-        self.items = OrderItem.objects.filter(order__id = self.order_id)
+        self.items = CartItem.objects.filter(order__id = self.order_id)
         
         
         print(f'order_id = {self.order_id}  items = {self.items},  noOfCartItems = {self.noOfCartItems}')
