@@ -72,7 +72,7 @@ class Cart(models.Model):
     transaction_id = models.CharField(max_length=100, null=True)
     
     def __str__(self) -> str:
-        return 'Cart ID: {self.id}'
+        return f'Cart ID: {self.id}'
     
     @property
     def shipping(self):
