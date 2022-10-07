@@ -1,3 +1,6 @@
+from email.policy import default
+from random import choices
+from tabnanny import verbose
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -111,6 +114,81 @@ class CartItem(models.Model):
     @property
     def get_total(self):
         return self.quantity * self.product.price
+    
+
+
+class Order(models.Model):
+    STATUS_CHOICES = (
+        (0, 'Waiting Payment'),
+        (1, 'Payment Received'),
+        (2, 'Preparing'),
+        (3, 'Prepared'),
+        (4, 'Shipping'),
+        (5, 'Delivered'),
+        (6, 'Cancelled')
+    )
+    
+    PAYMENT_OPTION_CHOICES = (
+        ('Cash On Delivery', 'Cash On Delivery'),
+        ('Bkash', 'Bkash'),
+    )
+    
+    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
+    order_status = models.IntegerField('Order Status', choices=STATUS_CHOICES, default=0)
+    payment_option = models.CharField('Payment Options', choices=PAYMENT_OPTION_CHOICES, max_length=20, default='Cash On Delivery')
+    created = models.DateTimeField('Created in', auto_now_add=True)
+    modified = models.DateTimeField('Modified in', auto_now=True)
+    
+    class Meta:
+        verbose_name = 'Order'
+        ordering = ('-created',)
+    
+    def __str__(self) -> str:
+        return f'Order #{self.pk}'
+    
+    @property
+    def products(self):
+        products_ids = self.items.values_list('product')
+        return Product.objects.filter(pk__in=products_ids)
+    
+    @property
+    def shipping(self):
+        shipping = False
+        order_items = self.orderitem_set.all()
+        
+        for item in order_items:
+            if item.product.digital == False:
+                shipping = True
+                break
+        return shipping
+    
+    @property
+    def get_order_total(self):
+        order_items = self.orderitem_set.all()
+        total = sum([item.get_total for item in order_items])
+        return total 
+    
+    @property
+    def get_number_of_items(self):
+        order_items = self.orderitem_set.all()
+        total = sum([item.quantity for item in order_items])
+        return total 
+
+        
+    
+class OrderItem(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True)
+    quantity = models.IntegerField(default=0, null=True, blank=True)
+    date_added = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self) -> str:
+        return f'OrderItem ID: {self.id}  ->   Name: {self.product.name}'
+    
+    @property
+    def get_total(self):
+        return self.quantity * self.product.price
+        
     
 
 class ShippingAddress(models.Model):
