@@ -119,9 +119,9 @@ class OrderDetailView(DetailView):
     def get(self, request, *args, **kwargs):
         self.cookieData = cartData(request = request)
         self.noOfCartItems = self.cookieData['noOfCartItems']
-        self.order_id = self.kwargs.get('pk')
-        self.items = CartItem.objects.filter(order__id = self.order_id)
+        self.cart_id = self.kwargs.get('pk')
+        self.items = CartItem.objects.filter(cart__id = self.cart_id)
         
         
-        print(f'order_id = {self.order_id}  items = {self.items},  noOfCartItems = {self.noOfCartItems}')
+        print(f'order_id = {self.cart_id}  items = {self.items},  noOfCartItems = {self.noOfCartItems}')
         return super(OrderDetailView, self).get(request, *args, **kwargs)   
