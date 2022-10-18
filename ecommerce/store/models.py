@@ -69,9 +69,8 @@ class Product(models.Model):
     
 class Cart(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
-    date_ordered = models.DateTimeField(auto_now_add=True)
-    date_completed = models.DateTimeField(auto_now_add=True)
-    complete = models.BooleanField(default=False, null=True, blank=False)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
     transaction_id = models.CharField(max_length=100, null=True)
     
     def __str__(self) -> str:
@@ -138,6 +137,7 @@ class Order(models.Model):
     payment_option = models.CharField('Payment Options', choices=PAYMENT_OPTION_CHOICES, max_length=20, default='Cash On Delivery')
     created = models.DateTimeField('Created in', auto_now_add=True)
     modified = models.DateTimeField('Modified in', auto_now=True)
+    transaction_id = models.CharField(max_length=100, null=True)
     
     class Meta:
         verbose_name = 'Order'
