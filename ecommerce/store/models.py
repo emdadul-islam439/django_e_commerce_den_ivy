@@ -105,6 +105,7 @@ class CartItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
     cart = models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True, blank=True)
     quantity = models.IntegerField(default=0, null=True, blank=True)
+    is_checked = models.BooleanField(default=True)
     date_added = models.DateTimeField(auto_now_add=True)
     
     def __str__(self) -> str:

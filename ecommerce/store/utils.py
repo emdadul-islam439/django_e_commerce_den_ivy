@@ -54,7 +54,7 @@ def cookieCart(request):
 def cartData(request):
     if request.user.is_authenticated:
         customer = request.user.customer
-        cart, created = Cart.objects.get_or_create(customer = customer, complete = False)
+        cart, created = Cart.objects.get_or_create(customer = customer)
         items = cart.cartitem_set.all()
         noOfCartItems = cart.get_number_of_items
     else:
@@ -88,8 +88,7 @@ def guestOrder(request, data):
     customer.save()
     
     cart = Cart.objects.create(
-        customer = customer,
-        complete = False
+        customer = customer
     )
     
     for item in items:

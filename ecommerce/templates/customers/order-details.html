@@ -7,10 +7,10 @@
                 Source: https://www.bootdey.com/snippets/view/Shop-Order-Tracking#html -->
             <div class="box-element padding-bottom-3x mb-3 mt-3">
                 <div class="card">
-                  <div class="p-4 text-center text-white text-lg rounded-top" style="background-color:#343a40 !important"><span class="text-uppercase">Tracking Order No - </span><span class="text-medium">34VB5540K83</span></div>
+                  <div class="p-4 text-center text-white text-lg rounded-top" style="background-color:#343a40 !important"><span class="text-uppercase">Order ID - </span><span class="text-medium">#{{ order.id }}</span></div>
                   <div class="d-flex flex-wrap flex-sm-nowrap justify-content-between py-3 px-2 bg-order-overview" style="background-color:#f5f5f5">
                     <div class="w-100 text-center py-1 px-2"><span class="text-medium">Shipped Via:</span> UPS Ground</div>
-                    <div class="w-100 text-center py-1 px-2"><span class="text-medium">Status:</span> Checking Quality</div>
+                    <div class="w-100 text-center py-1 px-2"><span class="text-medium">Status:</span> {{ order.get_order_status_display }}</div>
                     <div class="w-100 text-center py-1 px-2"><span class="text-medium">Expected Date:</span> SEP 09, 2017</div>
                   </div>
                   <div class="card-body">
@@ -59,7 +59,7 @@
                 <table class="table">
                     <tr>
                         <th><h5>Items: <strong>{{ order.get_number_of_items }} </strong></h5></th>
-                        <th><h5>Total:<strong> ${{order.get_cart_total|floatformat:2}} </strong></h5></th>
+                        <th><h5>Total:<strong> ${{order.get_order_total|floatformat:2}} </strong></h5></th>
                     </tr>
                 </table>
                 <br/>

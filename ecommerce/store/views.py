@@ -55,7 +55,7 @@ def UpdateItem(request):
     
     customer = request.user.customer
     product = Product.objects.get(id = productId)
-    cart, created = Cart.objects.get_or_create(customer = customer, complete = False)
+    cart, created = Cart.objects.get_or_create(customer = customer)
     cartItem, created = CartItem.objects.get_or_create(cart=cart, product=product)
     
     if action == 'add':
@@ -82,7 +82,7 @@ def processOrder(request):
     
     if request.user.is_authenticated:
         customer = request.user.customer
-        cart, created = Cart.objects.get_or_create(customer = customer, complete = False)
+        cart, created = Cart.objects.get_or_create(customer = customer)
     else:
         customer, cart = guestOrder(request= request, data= data)
         
@@ -90,10 +90,9 @@ def processOrder(request):
     cart.transaction_id = transaction_id
     
     if total == cart.get_cart_total:
-        cart.complete = True
         now_time = datetime.datetime.now()
         print(f'now_time = {now_time}  type(now_time) = {type(now_time)}')
-        cart.date_completed = now_time
+        cart.modified = now_time
     cart.save()
     
     if cart.shipping == True:

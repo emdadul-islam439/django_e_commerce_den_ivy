@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from customers.forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from store.utils import cartData, getWishListItems
-from store.models import Cart, CartItem
+from store.models import Order, OrderItem
 from customers.models import AdminUser
 from django.views.generic import DetailView
 from store import views as store_views
@@ -86,7 +86,7 @@ def orderList(request):
     cookieData = cartData(request = request)
     noOfCartItems = cookieData['noOfCartItems']
         
-    orders = Cart.objects.order_by('-id').filter(customer = request.user.customer)
+    orders = Order.objects.order_by('-id').filter(customer = request.user.customer)
     # orders.sort(key=attrgetter('id'), reverse=True)
     print('ORDERS: ', orders)
     context={ 'orders' : orders, 'noOfCartItems':  noOfCartItems}
@@ -97,7 +97,7 @@ def orderDetails(request):
     cookieData = cartData(request = request)
     noOfCartItems = cookieData['noOfCartItems']
         
-    orders = Cart.objects.order_by('-id').filter(customer = request.user.customer)
+    orders = Order.objects.order_by('-id').filter(customer = request.user.customer)
     # orders.sort(key=attrgetter('id'), reverse=True)
     print('ORDERS: ', orders)
     context={ 'orders' : orders, 'noOfCartItems':  noOfCartItems}
@@ -107,7 +107,7 @@ def orderDetails(request):
 class OrderDetailView(DetailView):
     template_name: str = "customers/order-details.html"
     context_object_name: str = "order"
-    model = Cart
+    model = Order
     
     def get_context_data(self,*args, **kwargs):
         context = super(OrderDetailView, self).get_context_data(*args,**kwargs)
@@ -119,9 +119,9 @@ class OrderDetailView(DetailView):
     def get(self, request, *args, **kwargs):
         self.cookieData = cartData(request = request)
         self.noOfCartItems = self.cookieData['noOfCartItems']
-        self.cart_id = self.kwargs.get('pk')
-        self.items = CartItem.objects.filter(cart__id = self.cart_id)
+        self.order_id = self.kwargs.get('pk')
+        self.items = OrderItem.objects.filter(order__id = self.order_id)
         
         
-        print(f'order_id = {self.cart_id}  items = {self.items},  noOfCartItems = {self.noOfCartItems}')
+        print(f'order_id = {self.order_id}  items = {self.items},  noOfCartItems = {self.noOfCartItems}')
         return super(OrderDetailView, self).get(request, *args, **kwargs)   
