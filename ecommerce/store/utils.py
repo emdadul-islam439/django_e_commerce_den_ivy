@@ -115,4 +115,37 @@ def getWishListItems(request):
         wishListProducts = []
     
     return wishListProducts
-        
+
+
+def getTrackInfoList(order_status: int):
+    class TrackItem:
+        def __init__(self, title: str, is_completed: bool, icon: str):
+            self.title = title
+            self.is_completed = is_completed
+            self.icon = icon
+    
+    title_tuple = (
+        'Waiting for Payment', 
+        'Preparing Order', 
+        'Order is Prepared', 
+        'Order in Shipping', 
+        'Order is Delivered'
+    )
+    icon_tuple = (
+        'pe-7s-timer',
+        'pe-7s-note',
+        'pe-7s-note2',
+        'pe-7s-plane',
+        'pe-7s-check'
+    )
+    
+    i = 0
+    track_info_list = []
+    length = len(title_tuple)
+    while i < length:
+        is_completed = i <= order_status
+        track_info_list.append(TrackItem(title_tuple[i], is_completed, icon_tuple[i]))
+        i += 1
+    
+    print(f'from GET-TRACK-INFO-LIST..... track_info_list[0] = {track_info_list[0].title}, {track_info_list[0].is_completed}, {track_info_list[0].icon}')
+    return track_info_list

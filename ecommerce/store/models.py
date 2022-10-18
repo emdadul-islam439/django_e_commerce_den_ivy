@@ -119,13 +119,12 @@ class CartItem(models.Model):
 
 class Order(models.Model):
     STATUS_CHOICES = (
-        (0, 'Waiting Payment'),
-        (1, 'Payment Received'),
-        (2, 'Preparing'),
-        (3, 'Prepared'),
-        (4, 'Shipping'),
-        (5, 'Delivered'),
-        (6, 'Cancelled')
+        (0, 'Waiting for Payment'),
+        (1, 'Preparing Order'),
+        (2, 'Order is Prepared'),
+        (3, 'Order in Shipping'),
+        (4, 'Order is Delivered'),
+        (5, 'Cancelled')
     )
     
     PAYMENT_OPTION_CHOICES = (

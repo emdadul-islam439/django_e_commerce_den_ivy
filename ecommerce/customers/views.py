@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from customers.forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
-from store.utils import cartData, getWishListItems
+from store.utils import cartData, getWishListItems, getTrackInfoList
 from store.models import Order, OrderItem
 from customers.models import AdminUser
 from django.views.generic import DetailView
@@ -105,6 +105,7 @@ def orderDetails(request):
 
 
 class OrderDetailView(DetailView):
+    login_required = True
     template_name: str = "customers/order-details.html"
     context_object_name: str = "order"
     model = Order
@@ -113,6 +114,7 @@ class OrderDetailView(DetailView):
         context = super(OrderDetailView, self).get_context_data(*args,**kwargs)
         context['items'] = self.items
         context['noOfCartItems'] = self.noOfCartItems
+        context['trackInfoList'] = self.trackInfoList
         return context
     
     
@@ -121,6 +123,9 @@ class OrderDetailView(DetailView):
         self.noOfCartItems = self.cookieData['noOfCartItems']
         self.order_id = self.kwargs.get('pk')
         self.items = OrderItem.objects.filter(order__id = self.order_id)
+        
+        orders = Order.objects.filter(id = self.order_id)
+        self.trackInfoList = getTrackInfoList(orders[0].order_status)
         
         
         print(f'order_id = {self.order_id}  items = {self.items},  noOfCartItems = {self.noOfCartItems}')
