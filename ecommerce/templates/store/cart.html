@@ -12,7 +12,7 @@
                         <th><h5>Items: <strong>{{ cart.get_number_of_items }} </strong></h5></th>
                         <th><h5>Total:<strong> ${{cart.get_cart_total|floatformat:2}} </strong></h5></th>
                         <th>
-                            <a  style="float:right; margin:5px;" class="btn btn-success" href="{% url 'checkout' %}">Checkout</a>
+                            <a id="checkout-button"  style="float:right; margin:5px;" class="btn btn-success" href="{% url 'checkout' %}">Checkout</a>
                         </th>
                     </tr>
                 </table>
@@ -44,9 +44,17 @@
                         <div style="flex:1"><p>{{item.get_total|floatformat:2}} </p></div>
                     </div>
                 {% endfor %}
+
+                {% if cart.get_number_of_items == 0 %}
+                    <script>
+                        document.getElementById("checkout-button").addEventListener('click', function(e){
+                            e.preventDefault()
+                            alert('Please add items into the cart!')
+                        })
+                    </script>
+                {% endif %}
         </div>
     </div>
-
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pixeden-stroke-7-icon@1.2.3/pe-icon-7-stroke/dist/pe-icon-7-stroke.min.css">	
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>

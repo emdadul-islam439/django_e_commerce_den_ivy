@@ -193,7 +193,7 @@ class OrderItem(models.Model):
 
 class ShippingAddress(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
-    cart = models.ForeignKey(Cart, on_delete=models.SET_NULL, null=True, blank=True)
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True)
     address = models.CharField(max_length=200, null=True)
     city = models.CharField(max_length=200, null=True)
     state = models.CharField(max_length=200, null=True)

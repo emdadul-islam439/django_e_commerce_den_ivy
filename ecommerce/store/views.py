@@ -1,6 +1,7 @@
 import json
-from django.shortcuts import render
-from store.models import Cart, Product, CartItem, ShippingAddress, WishListItem
+from statistics import quantiles
+from django.shortcuts import render, redirect
+from store.models import Cart, Product, CartItem, ShippingAddress, WishListItem, Order, OrderItem
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import datetime
@@ -36,6 +37,8 @@ def checkout(request):
     noOfCartItems = cookieData['noOfCartItems']
     cart = cookieData['cart']
     items = cookieData['items']
+    if len(items) == 0:
+        return redirect('/cart/')
     
     context={ 'items': items, 'cart': cart, 'noOfCartItems':  noOfCartItems }
     if not request.user.is_authenticated:
@@ -93,20 +96,47 @@ def processOrder(request):
         now_time = datetime.datetime.now()
         print(f'now_time = {now_time}  type(now_time) = {type(now_time)}')
         cart.modified = now_time
+        
+        order = Order.objects.create(
+            customer = customer,
+            transaction_id = transaction_id
+        )
+        
+        cartItems = CartItem.objects.filter(cart = cart, is_checked = True)
+        for item in cartItems:
+            OrderItem.objects.create(
+                product = item.product,
+                order = order,
+                quantity = item.quantity,
+            )
+            item.delete()
     cart.save()
     
     if cart.shipping == True:
         ShippingAddress.objects.create( 
             customer = customer,
-            cart = cart,
+            order = order,
             address = data['shipping']['address'],
             city = data['shipping']['city'],
             state = data['shipping']['state'],
             zipcode = data['shipping']['zipcode'],
         )
-    return JsonResponse('Payment Completed...', safe=False)
+    return JsonResponse(f'{order.id}', safe=False)
 
 
+
+def completePayment(request):
+    print(f'in complete-payment function:  data = {request.body}')
+    data = json.loads(request.body)
+    print(f'data after json-decode = {data}')
+    
+    order_id = data['order_id']
+    order, created = Order.objects.get_or_create(id = order_id)
+    order.order_status = 1
+    order.save()
+    
+    return JsonResponse(f"success", safe=False) 
+    
 
 def updateWishList(request):
     print('Data: ', request.body)

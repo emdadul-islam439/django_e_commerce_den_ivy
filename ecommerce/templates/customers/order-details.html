@@ -27,6 +27,9 @@
                             </div>
                         {% endfor%}
                     </div>
+                    {% if order.order_status == 0 %}
+                        <a id="complete-payment" style="display: block; margin-left: auto; margin-right: auto; width: 40%" class="btn btn-success">Complete Your Payment</a>
+                    {% endif %}
                   </div>
                 </div>
             </div>
@@ -68,6 +71,35 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.getElementById("complete-payment").addEventListener('click', function(e){
+            completePayment()
+        })
+        function completePayment(){
+            var url = '/complete_payment/'
+            fetch(url, {
+                method: 'POST',
+                headers:{
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({
+                    'order_id': {{ order.id }},
+                }),
+            })
+            .then((response) => response.json())
+            .then((data)=>{
+                console.log('Success: ', data)
+                alert("Payment Completed!")
+
+                cart = {}
+                console.log('Cart Created!', cart)
+                document.cookie = 'cart=' + JSON.stringify(cart) + ';domain=;path=/'
+                window.location.reload();
+            })
+        }
+    </script>
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/order-details.css' %}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pixeden-stroke-7-icon@1.2.3/pe-icon-7-stroke/dist/pe-icon-7-stroke.min.css">	
