@@ -89,7 +89,7 @@ class Cart(models.Model):
     
     @property
     def get_cart_total(self):
-        cart_items = self.cartitem_set.all()
+        cart_items = self.cartitem_set.filter(is_checked = True)
         total = sum([item.get_total for item in cart_items])
         return total 
     

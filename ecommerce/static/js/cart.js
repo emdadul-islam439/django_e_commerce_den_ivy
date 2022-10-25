@@ -52,7 +52,10 @@ function addCookieItem(productId, action){
     console.log('User is not logged in...')
     if(action == 'add'){
         if(cart[productId] == undefined){
-            cart[productId] = {'quantity': 1}
+            cart[productId] = {
+                'quantity': 1, 
+                'is_checked': true,
+            }
         }else{
             cart[productId]['quantity'] += 1
         }
@@ -63,7 +66,10 @@ function addCookieItem(productId, action){
             console.log('Item removed...')
             delete cart[productId]
         }
+    }else if(action == 'check-uncheck'){
+        cart[productId]['is_checked'] = !cart[productId]['is_checked']
     }
+
     console.log('Cart: ', cart)
     document.cookie = 'cart=' + JSON.stringify(cart) + ';domain=;path=/'
     location.reload()

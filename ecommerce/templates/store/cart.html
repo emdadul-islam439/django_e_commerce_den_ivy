@@ -21,6 +21,7 @@
             <br>
             <div class="box-element">
                 <div class="cart-row">
+                    <div style="flex:1"></div>
                     <div style="flex:2"></div>
                     <div style="flex:2"><strong>Item</strong></div>
                     <div style="flex:1"><strong>Price</strong></div>
@@ -30,6 +31,13 @@
                 
                 {% for item in items %}
                     <div class="cart-row">
+                        <div class="form-check form-check-inline">
+                            {% if item.is_checked %}
+                                <input  data-product={{item.product.id}} data-action="check-uncheck" class="form-check-input update-cart checked" type="checkbox" id="id_{{item.product.id}}" value="{{item.product.id}}" checked>
+                            {% else %}
+                                <input  data-product={{item.product.id}} data-action="check-uncheck" class="form-check-input update-cart" type="checkbox" id="id_{{item.product.id}}" value="{{item.product.id}}">
+                            {% endif %}
+                        </div>
                         <div style="flex:2"><img class="row-image" src="{{item.product.imageURL}}"></div>
                         <div style="flex:2"><p>{{item.product.name}}</p></div>
                         <div style="flex:1"><p>{{item.product.price|floatformat:2}} </p></div>

@@ -67,6 +67,9 @@ def UpdateItem(request):
     elif action == 'remove':
         cartItem.quantity -= 1
         response_message = 'Item was DELETED successfully'
+    elif action == 'check-uncheck':
+        cartItem.is_checked = not cartItem.is_checked
+        response_message = 'Item was CHECKED/UNCHECKED successfully'
     
     cartItem.save()
     
