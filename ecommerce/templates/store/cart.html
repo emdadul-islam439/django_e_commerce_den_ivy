@@ -9,7 +9,7 @@
                 <br>
                 <table class="table">
                     <tr>
-                        <th><h5>Items: <strong>{{ cart.get_number_of_items }} </strong></h5></th>
+                        <th><h5>Items: <strong>{{ cart.get_checked_item_count }} </strong></h5></th>
                         <th><h5>Total:<strong> ${{cart.get_cart_total|floatformat:2}} </strong></h5></th>
                         <th>
                             <a id="checkout-button"  style="float:right; margin:5px;" class="btn btn-success" href="{% url 'checkout' %}">Checkout</a>
@@ -20,7 +20,7 @@
 
             <br>
             <div class="box-element">
-                <div class="cart-row">
+                <div class="cart-row p-2 m-0">
                     <div style="flex:1"></div>
                     <div style="flex:2"></div>
                     <div style="flex:2"><strong>Item</strong></div>
@@ -30,7 +30,11 @@
                 </div>
                 
                 {% for item in items %}
-                    <div class="cart-row">
+                    {% if item.is_checked %}
+                    <div class="cart-row p-2 m-0" style="background-color:#f5f5f5;">
+                    {% else %}
+                    <div class="cart-row p-2 m-0">
+                    {% endif %}
                         <div class="form-check form-check-inline">
                             {% if item.is_checked %}
                                 <input  data-product={{item.product.id}} data-action="check-uncheck" class="form-check-input update-cart checked" type="checkbox" id="id_{{item.product.id}}" value="{{item.product.id}}" checked>
@@ -53,7 +57,7 @@
                     </div>
                 {% endfor %}
 
-                {% if cart.get_number_of_items == 0 %}
+                {% if cart.get_checked_item_count == 0 %}
                     <script>
                         document.getElementById("checkout-button").addEventListener('click', function(e){
                             e.preventDefault()

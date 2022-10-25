@@ -94,11 +94,16 @@ class Cart(models.Model):
         return total 
     
     @property
-    def get_number_of_items(self):
+    def get_all_cart_item_count(self):
         cart_items = self.cartitem_set.all()
         total = sum([item.quantity for item in cart_items])
         return total 
-        
+    
+    @property
+    def get_checked_item_count(self):
+        cart_items = self.cartitem_set.filter(is_checked = True)
+        total = sum([item.quantity for item in cart_items])
+        return total 
     
     
 class CartItem(models.Model):
