@@ -12,10 +12,10 @@ def cookieCart(request):
     items = []
     cart = {
         'get_cart_total': 0,
-        'get_all_cart_item_count': 0,
+        'get_checked_item_count': 0,
         'shipping': False
     }
-    noOfCartItems = cart['get_all_cart_item_count']
+    noOfCartItems = 0
     
     for id in temp_cart:
         try:
@@ -26,7 +26,7 @@ def cookieCart(request):
             
             if temp_cart[id]['is_checked']:
                 cart['get_cart_total'] += total
-                cart['get_all_cart_item_count'] += temp_cart[id]['quantity']
+                cart['get_checked_item_count'] += temp_cart[id]['quantity']
 
             item = {
                 'product': {
