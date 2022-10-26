@@ -37,7 +37,14 @@ def checkout(request):
     noOfCartItems = cookieData['noOfCartItems']
     cart = cookieData['cart']
     items = cookieData['items']
-    if len(items) == 0:
+    
+    checked_item_count = 0
+    for item in items:
+        if request.user.is_authenticated:
+            if item.is_checked: checked_item_count += 1
+        elif item['is_checked']: checked_item_count += 1
+        
+    if checked_item_count == 0:
         return redirect('/cart/')
     
     context={ 'items': items, 'cart': cart, 'noOfCartItems':  noOfCartItems }

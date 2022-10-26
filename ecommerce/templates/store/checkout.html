@@ -53,16 +53,14 @@
                 <hr>
 
                 {% for item in items %}
-                    <div class="cart-row">
-                        <div style="flex:2"><img class="row-image" src="{{item.product.imageURL}} "></div>
-                        <div style="flex:2"><p>{{item.product.name}}</p></div>
-                        <div style="flex:1"><p>{{item.product.price|floatformat:2}}</p></div>
-                        <div style="flex:1"><p>x{{item.quantity}}</p></div>
-                    </div>
-                {% empty %}
-                    <script>
-                        redi
-                    </script>
+                    {% if item.is_checked %}
+                        <div class="cart-row">
+                            <div style="flex:2"><img class="row-image" src="{{item.product.imageURL}} "></div>
+                            <div style="flex:2"><p>{{item.product.name}}</p></div>
+                            <div style="flex:1"><p>{{item.product.price|floatformat:2}}</p></div>
+                            <div style="flex:1"><p>x{{item.quantity}}</p></div>
+                        </div>
+                    {% endif %}
                 {% endfor %}
 
                 <h5>Items:   {{cart.get_checked_item_count}}</h5>
@@ -156,11 +154,21 @@
                 var orderId = parseInt(data)
                 console.log('orderId: ', orderId)
 
-                cart = {}
-                console.log('Cart Created!', cart)
-                document.cookie = 'cart=' + JSON.stringify(cart) + ';domain=;path=/'
+                deleteCheckedItemsFromCart()
                 window.location.href = "/order-details/"+orderId;
             })
+        }
+
+        function deleteCheckedItemsFromCart(){
+            console.log('User is not logged in...')
+            for(let productId in cart){
+                if(cart[productId]['is_checked']){
+                    console.log('Deleting checked item: id = '+productId)
+                    delete cart[productId]
+                }
+            }
+            console.log('Cart: ', cart)
+            document.cookie = 'cart=' + JSON.stringify(cart) + ';domain=;path=/'
         }
     </script>
 

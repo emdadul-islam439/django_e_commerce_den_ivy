@@ -94,8 +94,10 @@ def guestOrder(request, data):
     )
     
     for item in items:
-        product = Product.objects.get(id= item['product']['id'])
+        if item['is_checked'] == False: 
+            continue
         
+        product = Product.objects.get(id= item['product']['id'])
         cartItem = CartItem.objects.create(
             product = product,
             cart = cart,

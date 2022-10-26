@@ -73,9 +73,11 @@
     </div>
 
     <script>
-        document.getElementById("complete-payment").addEventListener('click', function(e){
-            completePayment()
-        })
+        {% if order.order_status == 0 %}
+            document.getElementById("complete-payment").addEventListener("click", function(e){
+                completePayment()
+            })
+        {% endif %}
         function completePayment(){
             var url = '/complete_payment/'
             fetch(url, {
@@ -92,10 +94,6 @@
             .then((data)=>{
                 console.log('Success: ', data)
                 alert("Payment Completed!")
-
-                cart = {}
-                console.log('Cart Created!', cart)
-                document.cookie = 'cart=' + JSON.stringify(cart) + ';domain=;path=/'
                 window.location.reload();
             })
         }
