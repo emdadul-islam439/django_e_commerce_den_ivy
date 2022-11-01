@@ -18,9 +18,11 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 from customers import views as customer_views
+from admin import views as admin_views
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
+    path('admin/store/order/<int:pk>/change/', admin_views.AdminOrderDetailView.as_view(), name="admin-order-details"),
     path('admin/', admin.site.urls),
     path('register/', customer_views.register, name = "register"),
     path('profile/', customer_views.profile, name = "profile"),

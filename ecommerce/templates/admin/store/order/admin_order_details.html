@@ -1,0 +1,109 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+{% block content %}   
+<div class="row">
+    <div class="col-lg-12">
+        <!-- For 'tracking' portion
+            Source: https://www.bootdey.com/snippets/view/Shop-Order-Tracking#html -->
+        <div class="box-element padding-bottom-3x mb-3 mt-3">
+            <div class="card">
+              <div class="p-4 text-center text-white text-lg rounded-top" style="background-color:#343a40 !important"><span class="text-uppercase">Order ID - </span><span class="text-medium">#{{ order.id }}</span></div>
+              <div class="d-flex flex-wrap flex-sm-nowrap justify-content-between py-3 px-2 bg-order-overview" style="background-color:#f5f5f5">
+                <div class="w-100 text-center py-1 px-2"><span class="text-medium">Status:</span> <strong>{{ order.get_order_status_display }}</strong></div>
+                <div class="w-100 text-center py-1 px-2"><span class="text-medium">Created Date:</span> {{ order.created }}</div>
+              </div>
+              <div class="card-body">
+                <div class="steps d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">
+                    {% for trackInfo in trackInfoList %} 
+                        {% if trackInfo.is_completed %}
+                        <div class="step completed">
+                        {% else %}
+                        <div class="step">
+                        {% endif %}
+                            <div class="step-icon-wrap">
+                            <div class="step-icon"><i class="{{ trackInfo.icon }}"></i></div>
+                            </div>
+                            <h4 class="step-title">{{ trackInfo.title }}</h4>
+                        </div>
+                    {% endfor%}
+                </div>
+                {% if order.order_status == 0 %}
+                    <a id="complete-payment" style="display: block; margin-left: auto; margin-right: auto; width: 40%" class="btn btn-success">MARK PAYMENT AS COMPLETED</a>
+                {% endif %}
+              </div>
+            </div>
+        </div>
+    
+    
+
+        <div class="box-element mb-5">
+            {% comment %} <a  class="btn btn-outline-dark pl-5 pr-5" href="{% url 'store' %}">Order Id: <strong>#{{order.id}}</strong></a> {% endcomment %}
+            {% comment %} <br> {% endcomment %}
+            <br>
+            <table class="table">
+                <tr>
+                    <th><h5>Items: <strong>{{ order.get_checked_item_count }} </strong></h5></th>
+                    <th><h5>Total:<strong> ${{order.get_order_total|floatformat:2}} </strong></h5></th>
+                </tr>
+            </table>
+            <br/>
+            {% comment %} <br/> {% endcomment %}
+
+            <div class="cart-row">
+                <div style="flex:2"></div>
+                <div style="flex:2"><strong>Item</strong></div>
+                <div style="flex:1"><strong>Price</strong></div>
+                <div style="flex:1"><strong>Quantity</strong></div>
+                <div style="flex:1"><strong>Total</strong></div>
+            </div>
+            
+            {% for item in items %}
+                <div class="cart-row">
+                    <div style="flex:2"><img class="row-image" src="{{item.product.imageURL}}"></div>
+                    <div style="flex:2"><p>{{item.product.name}}</p></div>
+                    <div style="flex:1"><p>{{item.product.price|floatformat:2}} </p></div>
+                    <div style="flex:1">
+                        <p class="quantity">{{item.quantity}}</p>
+                    </div>
+                    <div style="flex:1"><p>{{item.get_total|floatformat:2}} </p></div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    {% if order.order_status == 0 %}
+        document.getElementById("complete-payment").addEventListener("click", function(e){
+            completePayment()
+        })
+    {% endif %}
+    function completePayment(){
+        var url = '/complete_payment/'
+        fetch(url, {
+            method: 'POST',
+            headers:{
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify({
+                'order_id': {{ order.id }},
+            }),
+        })
+        .then((response) => response.json())
+        .then((data)=>{
+            console.log('Success: ', data)
+            alert("Payment Completed!")
+            window.location.reload();
+        })
+    }
+</script>
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/order-details.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pixeden-stroke-7-icon@1.2.3/pe-icon-7-stroke/dist/pe-icon-7-stroke.min.css">	
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js"></script>
+
+{% endblock %}
