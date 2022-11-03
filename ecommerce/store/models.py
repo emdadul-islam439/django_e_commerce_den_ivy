@@ -74,7 +74,7 @@ class Cart(models.Model):
     transaction_id = models.CharField(max_length=100, null=True)
     
     def __str__(self) -> str:
-        return f'Cart ID: {self.id}'
+        return f'Cart ID: {self.id}    -   Customer: {self.customer.user}'
     
     @property
     def shipping(self):
@@ -149,7 +149,7 @@ class Order(models.Model):
         ordering = ('-created',)
     
     def __str__(self) -> str:
-        return f'Order #{self.pk}'
+        return f'Order #{self.pk}     -     Customer: {self.customer.user}'
     
     @property
     def products(self):

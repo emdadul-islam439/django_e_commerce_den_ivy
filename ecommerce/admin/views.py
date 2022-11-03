@@ -1,7 +1,8 @@
-from django.shortcuts import render
+import json
+from django.http import JsonResponse
 from store.models import Order, OrderItem
 from django.views.generic import DetailView
-from store.utils import cartData, getWishListItems, getTrackInfoList
+from store.utils import cartData, getTrackInfoList
 
 class AdminOrderDetailView(DetailView):
     login_required = True
@@ -28,4 +29,73 @@ class AdminOrderDetailView(DetailView):
         
         
         print(f'.............................order_id = {self.order_id}  items = {self.items},  noOfCartItems = {self.noOfCartItems}')
-        return super(AdminOrderDetailView, self).get(request, *args, **kwargs)   
+        return super(AdminOrderDetailView, self).get(request, *args, **kwargs) 
+    
+    
+# @csrf_exempt
+def updateAdminOrderStatus(request, **kwargs):
+    data = json.loads(request.body)
+    
+    orderId = data['orderID']
+    statusIdx = data['statusIdx']
+    
+    print(f"orderId = {orderId} ")
+    print(f"statusIdx = {statusIdx}")
+    
+    order = Order.objects.get(id = orderId)
+    
+    order.order_status = statusIdx
+    response_message = 'order_status CHANGED successfully'
+    order.save()
+    
+    return JsonResponse(response_message, safe=False)  
+
+
+# @csrf_exempt
+def updateAdminOrderItem(request, **kwargs):
+    data = json.loads(request.body)
+    
+    itemId = data['itemId']
+    action = data['action']
+    
+    print('in UPDATE-ADMIN-ORDER-ITEM().............')
+    print(f"itemId = {itemId} ")
+    print(f"action = {action}")
+    
+    orderItem = OrderItem.objects.get(id = itemId)
+    
+    if action == 'add':
+        orderItem.quantity += 1
+        response_message = 'orderItem was INCREASED successfully'
+    elif action == 'remove':
+        if orderItem.quantity > 1:
+            orderItem.quantity -= 1
+            response_message = 'orderItem was DECREASED successfully'
+        else:
+            response_message = 'Failed! Only one item left!'
+    
+    orderItem.save()
+    return JsonResponse(response_message, safe=False)
+
+
+# @csrf_exempt
+def removeAdminOrderItem(request, **kwargs):
+    data = json.loads(request.body)
+    
+    itemId = data['itemId']
+    
+    order_id = kwargs.get('pk')
+    items = OrderItem.objects.filter(order__id = order_id)
+    itemCount = len(items)
+    
+    print('in REMOVE-ADMIN-ORDER-ITEM().............')
+    print(f"itemId = {itemId} order_id = {order_id}  itemCount = {itemCount}")
+    
+    if itemCount > 1:
+        orderItem = OrderItem.objects.get(id = itemId)
+        orderItem.delete()
+        response_message = 'orderItem was REMOVED successfully'
+    else:
+        response_message = 'Failed! Only one item left!'
+        
+    return JsonResponse(response_message, safe=False)

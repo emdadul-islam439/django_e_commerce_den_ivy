@@ -10,16 +10,27 @@
               <div class="p-4 text-center text-white text-lg rounded-top" style="background-color:#343a40 !important"><span class="text-uppercase">Order ID - </span><span class="text-medium">#{{ order.id }}</span></div>
               <div class="d-flex flex-wrap flex-sm-nowrap justify-content-between py-3 px-2 bg-order-overview" style="background-color:#f5f5f5">
                 <div class="w-100 text-center py-1 px-2"><span class="text-medium">Customer:</span><a href="/admin/auth/user/{{ order.customer.user.id }}/change/"> <strong>{{ order.customer.user.username }}</strong></a></div>
-                <div class="w-100 text-center py-1 px-2"><span class="text-medium">Status:</span> <strong>{{ order.get_order_status_display }}</strong></div>
+                <div class="w-100 text-center py-1 px-2">
+                    <span class="text-medium">Status:</span> 
+                    <select name="status" id="order-status" data-order={{order.id}} >
+                        {% for trackInfo in  trackInfoList %}
+                            {% if trackInfo.is_completed %}
+                                <option value="{{ trackInfo.title }}" selected="">{{ trackInfo.title }}</option>
+                            {% else %}
+                                <option value="{{ trackInfo.title }}">{{ trackInfo.title }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
                 <div class="w-100 text-center py-1 px-2"><span class="text-medium">Created Date:</span> {{ order.created }}</div>
               </div>
               <div class="card-body">
                 <div class="steps d-flex flex-wrap flex-sm-nowrap justify-content-between padding-top-2x padding-bottom-1x">    
                     {% for trackInfo in trackInfoList %} 
                         {% if trackInfo.is_completed %}
-                        <div class="step completed">
+                        <div id="track-{{ trackInfo.title }}" class="step completed">
                         {% else %}
-                        <div class="step">
+                        <div id="track-{{ trackInfo.title }}" class="step">
                         {% endif %}
                             <div class="step-icon-wrap">
                             <div class="step-icon"><i class="{{ trackInfo.icon }}"></i></div>
@@ -28,9 +39,6 @@
                         </div>
                     {% endfor%}
                 </div>
-                {% if order.order_status == 0 %}
-                    <a id="complete-payment" style="display: block; margin-left: auto; margin-right: auto; width: 40%" class="btn btn-success">MARK PAYMENT AS COMPLETED</a>
-                {% endif %}
               </div>
             </div>
         </div>
@@ -43,7 +51,7 @@
             <br>
             <table class="table">
                 <tr>
-                    <th><h5>Items: <strong>{{ order.get_checked_item_count }} </strong></h5></th>
+                    <th><h5>Items: <strong>{{ order.get_number_of_items }} </strong></h5></th>
                     <th><h5>Total:<strong> ${{order.get_order_total|floatformat:2}} </strong></h5></th>
                 </tr>
             </table>
@@ -56,6 +64,7 @@
                 <div style="flex:1"><strong>Price</strong></div>
                 <div style="flex:1"><strong>Quantity</strong></div>
                 <div style="flex:1"><strong>Total</strong></div>
+                <div style="flex:1"></div>
             </div>
             
             {% for item in items %}
@@ -64,42 +73,23 @@
                     <div style="flex:2"><p>{{item.product.name}}</p></div>
                     <div style="flex:1"><p>{{item.product.price|floatformat:2}} </p></div>
                     <div style="flex:1">
-                        <p class="quantity">{{item.quantity}}</p>
+                        <p id="quantity-{{item.id}}" class="quantity">{{item.quantity}}</p>
+                        <div class="quantity">
+                            <img data-item={{item.id}} data-action="add"  class="chg-quantity update-admin-order-item" src="{% static  'images/arrow-up.png' %}">
+                    
+                            <img data-item={{item.id}} data-action="remove"  class="chg-quantity update-admin-order-item" src="{% static  'images/arrow-down.png' %}">
+                        </div>
                     </div>
                     <div style="flex:1"><p>{{item.get_total|floatformat:2}} </p></div>
+                    <div style="flex:1"><button data-item={{item.id}} data-itemcnt={{items|length}}  type="button" class="btn btn-outline-danger rmv-item-btn">Remove</button></div>
                 </div>
             {% endfor %}
         </div>
     </div>
 </div>
 
-<script>
-    {% if order.order_status == 0 %}
-        document.getElementById("complete-payment").addEventListener("click", function(e){
-            completePayment()
-        })
-    {% endif %}
-    function completePayment(){
-        var url = '/complete_payment/'
-        fetch(url, {
-            method: 'POST',
-            headers:{
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrftoken
-            },
-            body: JSON.stringify({
-                'order_id': {{ order.id }},
-            }),
-        })
-        .then((response) => response.json())
-        .then((data)=>{
-            console.log('Success: ', data)
-            alert("Payment Completed!")
-            window.location.reload();
-        })
-    }
-</script>
-
+<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="{% static 'js/admin_order_details.js' %}"></script>
 <link rel="stylesheet" type="text/css" href="{% static 'css/order-details.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pixeden-stroke-7-icon@1.2.3/pe-icon-7-stroke/dist/pe-icon-7-stroke.min.css">	
