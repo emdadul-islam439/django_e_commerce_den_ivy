@@ -1,6 +1,6 @@
 import json
 from django.http import JsonResponse
-from store.models import Order, OrderItem
+from store.models import Order, OrderItem, Product
 from django.views.generic import DetailView
 from store.utils import cartData, getTrackInfoList
 
@@ -13,6 +13,7 @@ class AdminOrderDetailView(DetailView):
     def get_context_data(self,*args, **kwargs):
         context = super(AdminOrderDetailView, self).get_context_data(*args,**kwargs)
         context['items'] = self.items
+        context['products'] = self.products
         context['noOfCartItems'] = self.noOfCartItems
         context['trackInfoList'] = self.trackInfoList
         return context
@@ -23,6 +24,7 @@ class AdminOrderDetailView(DetailView):
         self.noOfCartItems = self.cookieData['noOfCartItems']
         self.order_id = self.kwargs.get('pk')
         self.items = OrderItem.objects.filter(order__id = self.order_id)
+        self.products = Product.objects.all()
         
         orders = Order.objects.filter(id = self.order_id)
         self.trackInfoList = getTrackInfoList(orders[0].order_status)
@@ -97,5 +99,27 @@ def removeAdminOrderItem(request, **kwargs):
         response_message = 'orderItem was REMOVED successfully'
     else:
         response_message = 'Failed! Only one item left!'
+        
+    return JsonResponse(response_message, safe=False)
+
+
+# @csrf_exempt
+def addAdminOrderItems(request, **kwargs):
+    data = json.loads(request.body)
+    
+    productIdList = data['productIdList']
+    order_id = kwargs.get('pk')
+    order = Order.objects.get(id=order_id)
+    print(f"order_id = {order_id}  productIdList = {productIdList}")
+    try:
+        for productId in productIdList:
+            product = Product.objects.get(id = productId)
+            orderItem, created = OrderItem.objects.get_or_create(order = order, product = product)
+            if orderItem.quantity == 0:
+                orderItem.quantity = 1
+                orderItem.save()
+        response_message = f'{len(productIdList)} orderItem(s) ADDED successfully'
+    except:
+        response_message = 'Failed! Error occured while adding item!'
         
     return JsonResponse(response_message, safe=False)

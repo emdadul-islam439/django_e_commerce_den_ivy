@@ -50,9 +50,10 @@
             {% comment %} <br> {% endcomment %}
             <br>
             <table class="table">
-                <tr>
-                    <th><h5>Items: <strong>{{ order.get_number_of_items }} </strong></h5></th>
-                    <th><h5>Total:<strong> ${{order.get_order_total|floatformat:2}} </strong></h5></th>
+                <tr style="display: flex; align-items: flex-stretch;">
+                    <th style="flex:3"><h5>Items: <strong>{{ order.get_number_of_items }} </strong></h5></th>
+                    <th style="flex:3"><h5>Total:<strong> ${{order.get_order_total|floatformat:2}} </strong></h5></th>
+                    <th style="flex:1"><button data-order={{order.id}} type="button" class="btn btn-outline-success add-admin-order-item-btn" data-toggle="modal" data-target="#modalCart">ADD ITEM</button></th>
                 </tr>
             </table>
             <br/>
@@ -81,12 +82,57 @@
                         </div>
                     </div>
                     <div style="flex:1"><p>{{item.get_total|floatformat:2}} </p></div>
-                    <div style="flex:1"><button data-item={{item.id}} data-itemcnt={{items|length}}  type="button" class="btn btn-outline-danger rmv-item-btn">Remove</button></div>
+                    <div style="flex:1"><button data-item={{item.id}} data-itemcnt={{items|length}}  type="button" class="btn btn-outline-danger rmv-admin-order-item-btn">REMOVE</button></div>
                 </div>
             {% endfor %}
         </div>
     </div>
 </div>
+
+<!-- Modal: modalCart -->
+<div class="modal fade" id="modalCart" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <!--Header-->
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">Your cart</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <!--Body-->
+      <div class="modal-body">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>check/uncheck</th>
+              <th>Product name</th>
+              <th>Unit Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for product in products %}
+                <tr>
+                <th scope="row" class="form-check form-check-inline">
+                    <input  data-product="{{product.id}}" class="form-check-input add-item-admin-order" type="checkbox" value="{{product.id}}">
+                </th>
+                <td>{{ product.name }}</td>
+                <td>{{ product.price|floatformat:2 }}$</td>
+                </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <!--Footer-->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" data-dismiss="modal">CLOSE</button>
+        <button id="btn-add-all" class="btn btn-primary" data-dismiss="modal">ADD ALL</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal: modalCart -->
 
 <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
 <script type="text/javascript" src="{% static 'js/admin_order_details.js' %}"></script>

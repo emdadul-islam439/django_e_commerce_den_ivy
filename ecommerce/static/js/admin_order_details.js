@@ -124,7 +124,7 @@ function getItemQuantity(itemId){
 
 
 
-var removeBtns = document.getElementsByClassName('rmv-item-btn')
+var removeBtns = document.getElementsByClassName('rmv-admin-order-item-btn')
 console.log('removeBtns.length = ', removeBtns.length)
 
 for(i = 0; i < removeBtns.length; i++){
@@ -164,4 +164,58 @@ function removeAdminOrderItem(itemId, itemCount){
         console.log('data:', data)
         location.reload()
     })
+}
+
+
+document.getElementById("btn-add-all").addEventListener("click", function(e){
+    var productCheckBoxes = document.getElementsByClassName("add-item-admin-order")
+    var checkedProductIdList = []
+    var j = 0
+
+    for(var checkBox of productCheckBoxes){
+        if(checkBox.checked){
+            console.log("checkbox.checked....  checkbox.value = "+checkBox.value+";")
+            checkedProductIdList[j++] = parseInt(checkBox.value)
+        }
+    }
+
+    console.log("checkedItemIdList.length="+checkedProductIdList.length+";   productCheckBoxes.length = "+productCheckBoxes.length)
+
+    clearCheckBoxes(productCheckBoxes)
+    addProductListIntoOrder(checkedProductIdList)
+})
+
+function addProductListIntoOrder(checkedProductIdList){
+    if(checkedProductIdList.length == 0){
+        alert("No item selected!")
+        return;
+    }
+
+    url = 'add-admin-order-items/'
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type' : 'application/json',
+            'X-CSRFToken': csrftoken,
+        },
+        body: JSON.stringify({
+            'productIdList': checkedProductIdList
+        })
+    })
+
+    .then((response) => {
+        return response.json()
+    })
+
+    .then((data)=>{
+        console.log('data:', data)
+        location.reload()
+    })
+}
+
+function clearCheckBoxes(productCheckBoxes){
+    for(var checkBox of productCheckBoxes){
+        checkBox.checked = false;
+    }
 }
