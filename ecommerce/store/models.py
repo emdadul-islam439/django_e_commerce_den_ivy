@@ -66,7 +66,6 @@ class Product(models.Model):
     
     
     
-    
 class Cart(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -104,6 +103,7 @@ class Cart(models.Model):
         cart_items = self.cartitem_set.filter(is_checked = True)
         total = sum([item.quantity for item in cart_items])
         return total 
+    
     
     
 class CartItem(models.Model):
@@ -209,6 +209,7 @@ class ShippingAddress(models.Model):
         return self.address
     
     
+    
 class WishListItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
@@ -216,3 +217,111 @@ class WishListItem(models.Model):
     
     def __str__(self) -> str:
         return f'WishListItem: product-name = {self.product.name} | customer = {self.customer}'
+    
+    
+    
+class BuyingItem(models.Model):
+    product = models.OneToOneField(Product, on_delete=models.PROTECT)
+    unit_price = models.FloatField()
+    purchase_price = models.FloatField()
+    quantity = models.IntegerField(default = 0)
+    product_source_name = models.CharField(max_length=200, null=True)
+    buying_time = models.DateTimeField(auto_now_add=True)
+    expiry_date = models.DateTimeField()
+    date_added = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self) -> str:
+        return f'BuyingItem: product-name = {self.product.name} | unit_price = {self.unit_price}  |  quantity = {self.unit_price}'
+    
+    @property
+    def total_unit_price(self):
+        return self.unit_price * self.quantity
+    
+    @property
+    def total_purchase_price(self):
+        return self.purchase_price * self.quantity
+    
+    
+        
+class SellingItem(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
+    product = models.OneToOneField(Product, on_delete=models.PROTECT)
+    unit_price = models.FloatField()
+    quantity = models.IntegerField(default = 0)
+    discount = models.FloatField()
+    date_added = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self) -> str:
+        return f'SellingItem: product-name = {self.product.name} | customer = {self.customer}'
+    
+    @property
+    def unit_selling_price(self):
+        return self.unit_price - self.discount
+    
+    @property
+    def total_unit_price(self):
+        return self.unit_price * self.quantity
+    
+    @property
+    def total_selling_price(self):
+        return self.unit_selling_price * self.quantity
+    
+    
+
+class Stock(models.Model):
+    product = models.OneToOneField(Product, on_delete=models.PROTECT)
+    current_unit_price = models.FloatField()
+    current_discount = models.FloatField()
+    
+    
+    def __str__(self) -> str:
+        return f'Stock: product-name = {self.product.name}'
+    
+    
+    @property
+    def current_selling_price(self):
+        return self.current_unit_price - self.current_discount
+    
+    @property 
+    def avg_purchase_price(self):
+        all_purchased_items = BuyingItem.objects.filter(product=self.product)
+        total_purchase_count = len(all_purchased_items)
+        
+        sum_of_purchase_price = sum([item.purchase_price for item in all_purchased_items]) if total_purchase_count > 0 else 0
+        return sum_of_purchase_price / total_purchase_count
+    
+    @property
+    def avg_discount_price(self):
+        all_sold_items = SellingItem.objects.filter(product=self.product)
+        total_sell_count = len(all_sold_items)
+        
+        sum_of_discount_price = sum([item.discount for item in all_sold_items]) if total_sell_count > 0 else 0
+        return sum_of_discount_price / total_sell_count
+    
+    @property
+    def avg_selling_price(self):
+        all_sold_items = SellingItem.objects.filter(product=self.product)
+        total_sell_count = len(all_sold_items)
+        
+        sum_of_selling_price = sum([item.discount for item in all_sold_items]) if total_sell_count > 0 else 0
+        return sum_of_selling_price / total_sell_count
+        
+        
+    @property
+    def no_of_purchased_unit(self):
+        all_purchased_items = BuyingItem.objects.filter(product=self.product)
+        sum_of_purchase_quantity = sum([item.quantity for item in all_purchased_items]) if len(all_purchased_items) > 0 else 0
+        return sum_of_purchase_quantity
+        
+    
+    @property 
+    def no_of_sold_unit(self):
+        all_sold_items = SellingItem.objects.filter(product=self.product)
+        sum_of_sold_unit = sum([item.quantity for item in all_sold_items]) if len(all_sold_items) > 0 else 0
+        return sum_of_sold_unit
+    
+    
+    @property
+    def no_of_item_in_stock(self):
+        return self.no_of_purchased_unit - self.no_of_sold_unit
+    
