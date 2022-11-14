@@ -222,7 +222,7 @@ def stockItemList(request):
 
 
 # Create your views here.
-def purchasedItems(request):
+def purchasedItemsList(request):
     cookieData = cartData(request = request)
     noOfCartItems = cookieData['noOfCartItems']
         
@@ -233,7 +233,7 @@ def purchasedItems(request):
 
 
 # Create your views here.
-def soldItems(request):
+def soldItemsList(request):
     cookieData = cartData(request = request)
     noOfCartItems = cookieData['noOfCartItems']
         

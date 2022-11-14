@@ -6,9 +6,9 @@ from store.views import ProductDetailView
 
 urlpatterns = [
     path('', customer_views.redirectUser, name = 'redirect'),
-    path('stock-details/', store_views.stockItemList, name='stock-details'),
-    path('purchased-items/', store_views.purchasedItems, name='purchased-items'),
-    path('sold-items/', store_views.soldItems, name='sold-items'),
+    path('stock-item-list/', store_views.stockItemList, name='stock-item-list'),
+    path('purchased-items-list/', store_views.purchasedItemsList, name='purchased-items-list'),
+    path('sold-items-list/', store_views.soldItemsList, name='sold-items-list'),
     path('store/', store_views.store, name = 'store'),
     path('cart/', store_views.cart, name = 'cart'),
     path('checkout/', store_views.checkout, name = 'checkout'),
