@@ -220,7 +220,7 @@ class WishListItem(models.Model):
     
     
     
-class BuyingItem(models.Model):
+class PurchasedItem(models.Model):
     product = models.OneToOneField(Product, on_delete=models.PROTECT)
     unit_price = models.FloatField()
     purchase_price = models.FloatField()
@@ -231,7 +231,7 @@ class BuyingItem(models.Model):
     date_added = models.DateTimeField(auto_now_add=True)
     
     def __str__(self) -> str:
-        return f'BuyingItem: product-name = {self.product.name} | unit_price = {self.unit_price}  |  quantity = {self.unit_price}'
+        return f'BuyingItem: product-name = {self.product.name} | unit_price = {self.unit_price}  |  quantity = {self.quantity}'
     
     @property
     def total_unit_price(self):
@@ -243,7 +243,7 @@ class BuyingItem(models.Model):
     
     
         
-class SellingItem(models.Model):
+class SoldItem(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
     product = models.OneToOneField(Product, on_delete=models.PROTECT)
     unit_price = models.FloatField()
@@ -284,7 +284,7 @@ class Stock(models.Model):
     
     @property 
     def avg_purchase_price(self):
-        all_purchased_items = BuyingItem.objects.filter(product=self.product)
+        all_purchased_items = PurchasedItem.objects.filter(product=self.product)
         total_purchase_count = len(all_purchased_items)
         
         sum_of_purchase_price = sum([item.purchase_price for item in all_purchased_items]) if total_purchase_count > 0 else 0
@@ -292,7 +292,7 @@ class Stock(models.Model):
     
     @property
     def avg_discount_price(self):
-        all_sold_items = SellingItem.objects.filter(product=self.product)
+        all_sold_items = SoldItem.objects.filter(product=self.product)
         total_sell_count = len(all_sold_items)
         
         sum_of_discount_price = sum([item.discount for item in all_sold_items]) if total_sell_count > 0 else 0
@@ -300,7 +300,7 @@ class Stock(models.Model):
     
     @property
     def avg_selling_price(self):
-        all_sold_items = SellingItem.objects.filter(product=self.product)
+        all_sold_items = SoldItem.objects.filter(product=self.product)
         total_sell_count = len(all_sold_items)
         
         sum_of_selling_price = sum([item.discount for item in all_sold_items]) if total_sell_count > 0 else 0
@@ -309,14 +309,14 @@ class Stock(models.Model):
         
     @property
     def no_of_purchased_unit(self):
-        all_purchased_items = BuyingItem.objects.filter(product=self.product)
+        all_purchased_items = PurchasedItem.objects.filter(product=self.product)
         sum_of_purchase_quantity = sum([item.quantity for item in all_purchased_items]) if len(all_purchased_items) > 0 else 0
         return sum_of_purchase_quantity
         
     
     @property 
     def no_of_sold_unit(self):
-        all_sold_items = SellingItem.objects.filter(product=self.product)
+        all_sold_items = SoldItem.objects.filter(product=self.product)
         sum_of_sold_unit = sum([item.quantity for item in all_sold_items]) if len(all_sold_items) > 0 else 0
         return sum_of_sold_unit
     
