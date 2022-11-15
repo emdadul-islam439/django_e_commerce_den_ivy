@@ -288,7 +288,7 @@ class Stock(models.Model):
         total_purchase_count = len(all_purchased_items)
         
         sum_of_purchase_price = sum([item.purchase_price for item in all_purchased_items]) if total_purchase_count > 0 else 0
-        return sum_of_purchase_price / total_purchase_count
+        return 0 if total_purchase_count == 0 else sum_of_purchase_price / total_purchase_count
     
     @property
     def avg_discount_price(self):
@@ -296,7 +296,7 @@ class Stock(models.Model):
         total_sell_count = len(all_sold_items)
         
         sum_of_discount_price = sum([item.discount for item in all_sold_items]) if total_sell_count > 0 else 0
-        return sum_of_discount_price / total_sell_count
+        return  0 if total_sell_count == 0 else sum_of_discount_price / total_sell_count
     
     @property
     def avg_selling_price(self):
@@ -304,7 +304,7 @@ class Stock(models.Model):
         total_sell_count = len(all_sold_items)
         
         sum_of_selling_price = sum([item.discount for item in all_sold_items]) if total_sell_count > 0 else 0
-        return sum_of_selling_price / total_sell_count
+        return  0 if total_sell_count == 0 else sum_of_selling_price / total_sell_count
         
         
     @property

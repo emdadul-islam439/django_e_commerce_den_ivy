@@ -12,4 +12,9 @@ admin.site.register(ShippingAddress)
 admin.site.register(WishListItem)
 admin.site.register(PurchasedItem)
 admin.site.register(SoldItem)
-admin.site.register(Stock)
+
+class StockAdminModel(admin.ModelAdmin):
+    search_fields=('product__name',)
+    list_display= ("product", "current_unit_price", "current_discount", "current_selling_price", "no_of_item_in_stock", "avg_purchase_price", "avg_discount_price", "avg_selling_price",)
+    list_editable = ["current_unit_price", "current_discount",]
+admin.site.register(Stock, StockAdminModel)
