@@ -210,7 +210,6 @@ class ProductDetailView(DetailView):
         return super(ProductDetailView, self).get(request, *args, **kwargs)
     
     
-# Create your views here.
 def stockItemList(request):
     cookieData = cartData(request = request)
     noOfCartItems = cookieData['noOfCartItems']
@@ -218,26 +217,26 @@ def stockItemList(request):
     products = Stock.objects.all()
     print(f'........STORE PAGE......  noOfCartItems = {noOfCartItems}')
     context={ 'stockItemList' : products, 'noOfCartItems':  noOfCartItems}
-    return render(request, "admin/store/stock/admin_stock_items_list.html", context)
+    return render(request, "admin/store/stock/admin_stock_item_list.html", context)
 
 
-# Create your views here.
-def purchasedItemsList(request):
+
+def purchasedItemList(request):
     cookieData = cartData(request = request)
     noOfCartItems = cookieData['noOfCartItems']
         
     products = PurchasedItem.objects.all()
     print(f'........STORE PAGE......  noOfCartItems = {noOfCartItems}')
     context={ 'purchasedItemsList' : products, 'noOfCartItems':  noOfCartItems}
-    return render(request, "admin/store/stock/admin_purchased_items_list.html", context)
+    return render(request, "admin/store/purchaseditem/admin_purchased_item_list.html", context)
 
 
-# Create your views here.
-def soldItemsList(request):
+
+def soldItemList(request):
     cookieData = cartData(request = request)
     noOfCartItems = cookieData['noOfCartItems']
         
     products = SoldItem.objects.all()
     print(f'........STORE PAGE......  noOfCartItems = {noOfCartItems}')
     context={ 'soldItemsList' : products, 'noOfCartItems':  noOfCartItems}
-    return render(request, "admin/store/stock/admin_sold_items_list.html", context)
+    return render(request, "admin/store/solditem/admin_sold_item_list.html", context)

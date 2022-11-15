@@ -7,8 +7,8 @@ from store.views import ProductDetailView
 urlpatterns = [
     path('', customer_views.redirectUser, name = 'redirect'),
     path('stock-item-list/', store_views.stockItemList, name='stock-item-list'),
-    path('purchased-items-list/', store_views.purchasedItemsList, name='purchased-items-list'),
-    path('sold-items-list/', store_views.soldItemsList, name='sold-items-list'),
+    path('purchased-item-list/', store_views.purchasedItemList, name='purchased-items-list'),
+    path('sold-item-list/', store_views.soldItemList, name='sold-items-list'),
     path('store/', store_views.store, name = 'store'),
     path('cart/', store_views.cart, name = 'cart'),
     path('checkout/', store_views.checkout, name = 'checkout'),
