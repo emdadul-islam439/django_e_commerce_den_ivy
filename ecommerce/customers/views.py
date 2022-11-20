@@ -19,7 +19,7 @@ def redirectUser(request):
         print(f'admin.id = {admin.id}')
         print('request.user.id = ', request.user.id)
         if request.user.id == admin.id:
-            return redirect('admin/', permanent= True)
+            return redirect('admin/store/stock/', permanent= True)
     return redirect('store/', parmanent= True)
     
     
