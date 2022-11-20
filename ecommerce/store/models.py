@@ -22,7 +22,6 @@ class Product(models.Model):
     discount_price = models.FloatField(default=0.0)
     digital = models.BooleanField(default=False, null=True, blank=True)
     image = models.ImageField(null=True, blank=True)
-    order_limit = models.IntegerField(default=50)
     
     def __str__(self) -> str:
         return self.name
@@ -60,9 +59,21 @@ class Product(models.Model):
         print('returning...  user_list = ', customer_list)
         return customer_list
     
+    
     @property
-    def get_product_price(self):
-        return self.price
+    def get_current_unit_price(self):
+        stock_info = self.stock_set.all()
+        return stock_info[0].current_unit_price
+    
+    @property
+    def get_current_discount(self):
+        stock_info = self.stock_set.all()
+        return stock_info[0].current_discount
+    
+    @property
+    def get_current_selling_price(self):
+        stock_info = self.stock_set.all()
+        return stock_info[0].get_current_selling_price
     
     
     
@@ -270,17 +281,29 @@ class SoldItem(models.Model):
 
 class Stock(models.Model):
     product = models.OneToOneField(Product, on_delete=models.PROTECT)
-    current_unit_price = models.FloatField()
     current_discount = models.FloatField()
+    order_limit = models.IntegerField(default=50)
     
     
     def __str__(self) -> str:
         return f'Stock: product-name = {self.product.name}'
     
+    @property
+    def current_unit_price(self):
+        all_purchased_items = PurchasedItem.objects.filter(product=self.product)
+        total_purchase_count = len(all_purchased_items)
+        return 0 if total_purchase_count == 0 else all_purchased_items[total_purchase_count - 1].unit_price
+        
     
     @property
     def current_selling_price(self):
         return self.current_unit_price - self.current_discount
+    
+    @property
+    def current_purchase_price(self):
+        all_purchased_items = PurchasedItem.objects.filter(product=self.product)
+        total_purchase_count = len(all_purchased_items)
+        return 0 if total_purchase_count == 0 else all_purchased_items[total_purchase_count - 1].purchase_price
     
     @property 
     def avg_purchase_price(self):
@@ -324,4 +347,9 @@ class Stock(models.Model):
     @property
     def no_of_item_in_stock(self):
         return self.no_of_purchased_unit - self.no_of_sold_unit
+    
+    
+    @property
+    def effective_order_limit(self):
+        return min(self.order_limit, self.no_of_item_in_stock)
     
