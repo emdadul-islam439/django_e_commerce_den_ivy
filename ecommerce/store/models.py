@@ -242,7 +242,7 @@ class PurchasedItem(models.Model):
     date_added = models.DateTimeField(auto_now_add=True)
     
     def __str__(self) -> str:
-        return f'BuyingItem: product-name = {self.product.name} | unit_price = {self.unit_price}  |  quantity = {self.quantity}'
+        return f'PurchasedItem: product-name = {self.product.name} | unit_price = {self.unit_price}  |  quantity = {self.quantity}'
     
     @property
     def total_unit_price(self):
@@ -257,9 +257,10 @@ class PurchasedItem(models.Model):
 class SoldItem(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
     product = models.OneToOneField(Product, on_delete=models.PROTECT)
-    unit_price = models.FloatField()
+    unit_price = models.FloatField(default=0.0)
+    purchase_price = models.FloatField(default=0.0)
     quantity = models.IntegerField(default = 0)
-    discount = models.FloatField()
+    discount = models.FloatField(default=0.0)
     date_added = models.DateTimeField(auto_now_add=True)
     
     def __str__(self) -> str:
@@ -274,8 +275,24 @@ class SoldItem(models.Model):
         return self.unit_price * self.quantity
     
     @property
+    def total_purchase_price(self):
+        return self.purchase_price * self.quantity
+    
+    @property
+    def total_discount(self):
+        return self.discount * self.quantity
+    
+    @property
     def total_selling_price(self):
         return self.unit_selling_price * self.quantity
+    
+    @property
+    def unit_profit(self):
+        return self.unit_selling_price - self.purchase_price
+    
+    @property
+    def total_profit(self):
+        return self.unit_profit * self.quantity
     
     
 

@@ -19,12 +19,17 @@ admin.site.register(ShippingAddress)
 admin.site.register(WishListItem)
 
 class PurchasedAdminModel(admin.ModelAdmin):
+    list_display=["product", "unit_price", "purchase_price", "quantity", "total_unit_price", "total_purchase_price"]
+    list_editable=["unit_price", "purchase_price", "quantity"]
+    list_filter=["date_added", "buying_time", "expiry_date", ]
     raw_id_fields=["product",]
     search_fields=["product"]
     autocomplete_fields=["product"]
 admin.site.register(PurchasedItem, PurchasedAdminModel)
 
 class SoldAdminModel(admin.ModelAdmin):
+    list_display=["product", "customer", "purchase_price", "unit_price", "discount", "unit_selling_price", "quantity", "total_purchase_price", "total_unit_price", "total_discount", "total_selling_price", "total_profit",]
+    list_filter=["date_added",]
     raw_id_fields=["product", "customer", ]
     search_fields=("product", "customer")
     autocomplete_fields=("product", "customer")
