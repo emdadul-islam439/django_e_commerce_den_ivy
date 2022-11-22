@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from customers.forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
-from store.utils import cartData, getWishListItems, getTrackInfoList
+from store.utils import cartData, getWishListItems, getTrackInfoList, getCartItemList, getStockInfoList
 from store.models import Order, OrderItem
 from customers.models import AdminUser
 from django.views.generic import DetailView
@@ -74,11 +74,13 @@ def wishList(request):
     noOfCartItems = cookieData['noOfCartItems']
         
     products = getWishListItems(request)
-    # products = Product.objects.all()
-    print('PRODUCTs: ', products)
-    context={ 'products' : products, 'noOfCartItems':  noOfCartItems}
+    cartItemList = getCartItemList(request, products, cookieData)
+    stockInfoList = getStockInfoList(products)
+    
+    productInfoList = list(zip(products, cartItemList, stockInfoList))
+    print('----WishList Page productInfoList: ', list(productInfoList))
+    context={ 'productInfoList' : productInfoList, 'noOfCartItems':  noOfCartItems}
     return render(request, 'customers/wishlist.html', context)
-    # return HttpResponse("HI, this is the wishlist page")
     
 
 @login_required 
@@ -87,7 +89,6 @@ def orderList(request):
     noOfCartItems = cookieData['noOfCartItems']
         
     orders = Order.objects.order_by('-id').filter(customer = request.user.customer)
-    # orders.sort(key=attrgetter('id'), reverse=True)
     print('ORDERS: ', orders)
     context={ 'orders' : orders, 'noOfCartItems':  noOfCartItems}
     return render(request, 'customers/order-list.html', context)
@@ -98,7 +99,6 @@ def orderDetails(request):
     noOfCartItems = cookieData['noOfCartItems']
         
     orders = Order.objects.order_by('-id').filter(customer = request.user.customer)
-    # orders.sort(key=attrgetter('id'), reverse=True)
     print('ORDERS: ', orders)
     context={ 'orders' : orders, 'noOfCartItems':  noOfCartItems}
     return render(request, 'customers/order-list.html', context)

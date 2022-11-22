@@ -18,7 +18,7 @@ def store(request):
     cartItemList = getCartItemList(request, products, cookieData)
     stockInfoList = getStockInfoList(products)
     
-    productInfoList = zip(products, cartItemList, stockInfoList)
+    productInfoList = list(zip(products, cartItemList, stockInfoList))
     
     print(f'........STORE PAGE......  noOfCartItems = {noOfCartItems}')
     context={ 'productInfoList' : productInfoList, 'noOfCartItems':  noOfCartItems}
