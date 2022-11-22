@@ -2,9 +2,11 @@
 {% load static %}
 {% block content %}
     <div class="row">
-        {% for product in products %}
+        {% for product, cartItemInfo, stockInfo in productInfoList %}
             <div id='wish-item-product-id-{{product.id}}' class="col-lg-4">
-                <img class="thumbnail" src="{{product.imageURL}}">
+                <img id="img-id-{{ forloop.counter0 }}" data-counter={{ forloop.counter0 }} class="thumbnail fade-while-hovering" src="{{product.imageURL}}">
+                <a id="view-btn-id-{{ forloop.counter0 }}" data-counter={{ forloop.counter0 }}  class="btn btn-success align-center view-btn hidden" href="/product-details/{{product.id}}">View Details</a>
+
                 <div class="box-element product">
                     <strong>{{product.name}}</strong>
                     <a data-product={{product.id}} class="text-decoration-none wish-list" style="float:right">
@@ -14,14 +16,12 @@
 
                             {% if request.user.customer in product.wishlist_item_customer_list %}
                                 <script>
-                                    {% comment %} console.log("request.user.customer = {{request.user.customer}}  ||   product.wishlist_item_customer_list = {{product.wishlist_item_customer_list}} ") {% endcomment %}
                                     console.log("remove-btn: product.name = {{product.name}}   ||  product.isInWishList = '{{product.isInWishlist}}'")
                                     document.getElementById("remove-btn-{{product.id}}").classList.remove("hidden")
                                     document.getElementById("add-btn-{{product.id}}").classList.add("hidden")
                                 </script>
-                            {% else %}
+                            {% else %}  
                                 <script>
-                                    {% comment %} console.log("request.user.customer = {{request.user.customer}}  ||   product.wishlist_item_customer_list = {{product.wishlist_item_customer_list}} ") {% endcomment %}
                                     console.log("add-btn: product.name = {{product.name}}   ||  product.isInWishList = '{{product.isInWishlist}}'")
                                     document.getElementById("remove-btn-{{product.id}}").classList.add("hidden")
                                     document.getElementById("add-btn-{{product.id}}").classList.remove("hidden")
@@ -31,9 +31,23 @@
                     </a>
 
                     <hr>
-            
-                    <button data-product={{product.id}} data-action="add"  class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
-                    <a class="btn btn-outline-success" href="/product-details/{{product.id}}">View</a>
+
+                    {% if stockInfo.effectiveOrderLimit %}
+                        {% if cartItemInfo.quantity > 0 %}
+                            <button data-product={{product.id}} data-action="remove"  class="btn btn-outline-dark remove-btn update-cart pl-2 pr-2">-</button>
+                            <button class="btn btn-outline-dark pl-4 pr-4">{{ cartItemInfo.quantity }}</button>
+                            {% if cartItemInfo.quantity <= stockInfo.effectiveOrderLimit %}
+                                <button data-product={{product.id}} data-action="add"  class="btn btn-outline-dark add-btn update-cart pl-2 pr-2">+</button>
+                            {% else %}
+                                <button class="btn btn-outline-secondary cannot-add-btn pl-2 pr-2">+</button>
+                            {% endif %}
+                        {% else %}
+                            <button data-product={{product.id}} data-action="add"  class="btn btn-outline-dark add-btn update-cart"> Add to Cart </button>
+                        {% endif %}
+                    {% else %}
+                        <button class="btn btn-outline-danger">Out of Stock</button>
+                    {% endif %}
+
                     <h4 style="display: inline-block; float: right"><strong>${{product.price|floatformat:2}}</strong></h4>
             
                 </div>

@@ -5,7 +5,7 @@ from store.models import Cart, Product, CartItem, ShippingAddress, WishListItem,
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import datetime
-from . utils import cartData, guestOrder, cookieCart, getWishListItems
+from . utils import cartData, guestOrder, cookieCart, getWishListItems, getCartItemList, getStockInfoList
 from django.views.generic import DetailView
 from django.contrib import messages
 
@@ -15,8 +15,13 @@ def store(request):
     noOfCartItems = cookieData['noOfCartItems']
         
     products = Product.objects.all()
+    cartItemList = getCartItemList(request, products, cookieData)
+    stockInfoList = getStockInfoList(products)
+    
+    productInfoList = zip(products, cartItemList, stockInfoList)
+    
     print(f'........STORE PAGE......  noOfCartItems = {noOfCartItems}')
-    context={ 'products' : products, 'noOfCartItems':  noOfCartItems}
+    context={ 'productInfoList' : productInfoList, 'noOfCartItems':  noOfCartItems}
     return render(request, 'store/store.html', context)
 
 

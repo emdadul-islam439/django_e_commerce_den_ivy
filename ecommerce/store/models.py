@@ -62,18 +62,23 @@ class Product(models.Model):
     
     @property
     def get_current_unit_price(self):
-        stock_info = self.stock_set.all()
-        return stock_info[0].current_unit_price
+        stock_info = self.stock_set.all().first()
+        return stock_info.current_unit_price
     
     @property
     def get_current_discount(self):
-        stock_info = self.stock_set.all()
-        return stock_info[0].current_discount
+        stock_info = self.stock_set.all().first()
+        return stock_info.current_discount
     
     @property
     def get_current_selling_price(self):
-        stock_info = self.stock_set.all()
-        return stock_info[0].get_current_selling_price
+        stock_info = self.stock_set.all().first()
+        return stock_info.get_current_selling_price
+    
+    @property
+    def get_stock_info(self):
+        stock_info = self.stock_set.all().first()
+        return stock_info
     
     
     
@@ -130,6 +135,11 @@ class CartItem(models.Model):
     @property
     def get_total(self):
         return self.quantity * self.product.price
+    
+    @property
+    def get_stock_info(self):
+        stock_item = Stock.objects.all().first()
+        return stock_item
     
 
 

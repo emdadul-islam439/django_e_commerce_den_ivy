@@ -10,7 +10,7 @@ for(i = 0; i < updateBtns.length; i++){
 
         console.log('USER: ', user)
         if(user == 'AnonymousUser'){
-            addCookieItem(productId, action)
+            updateCookieItem(productId, action)
         }else{
             updateUserOrder(productId, action)
         }
@@ -48,7 +48,7 @@ function updateUserOrder(productId, action){
 }
 
 
-function addCookieItem(productId, action){
+function updateCookieItem(productId, action){
     console.log('User is not logged in...')
     if(action == 'add'){
         if(cart[productId] == undefined){
@@ -73,4 +73,45 @@ function addCookieItem(productId, action){
     console.log('Cart: ', cart)
     document.cookie = 'cart=' + JSON.stringify(cart) + ';domain=;path=/'
     location.reload()
+}
+
+
+var cannotAddBtns = document.getElementsByClassName('cannot-add-btn')
+console.log('cannotAddBtns.length = ', cannotAddBtns.length)
+
+for(i = 0; i < cannotAddBtns.length; i++){
+    cannotAddBtns[i].addEventListener('click', function(){
+        alert('Order Limit reached! Cannot add more!')
+    })
+}
+
+
+var fadeInImages = document.getElementsByClassName('fade-while-hovering')
+console.log('fadeInImages.length = ', fadeInImages.length)
+for(i=0; i<fadeInImages.length; i++){
+    fadeInImages[i].addEventListener('mouseover', function(){
+        var counter = this.dataset.counter
+        fadeInImages[counter].style.opacity = 0.5;
+        document.getElementById("view-btn-id-"+counter).classList.remove("hidden")
+    })
+    fadeInImages[i].addEventListener('mouseout', function(){
+        var counter = this.dataset.counter
+        fadeInImages[counter].style.opacity = 1.0;
+        document.getElementById("view-btn-id-"+counter).classList.add("hidden")
+    })
+}
+
+var viewBtns = document.getElementsByClassName('view-btn')
+console.log('viewBtns.length = ', viewBtns.length)
+for(i=0; i<viewBtns.length; i++){
+    viewBtns[i].addEventListener('mouseover', function(){
+        var counter = this.dataset.counter
+        viewBtns[counter].classList.remove("hidden")
+        document.getElementById("img-id-"+counter).style.opacity = 0.5
+    })
+    viewBtns[i].addEventListener('mouseout', function(){
+        var counter = this.dataset.counter
+        viewBtns[counter].classList.add("hidden")
+        document.getElementById("img-id-"+counter).style.opacity = 1.0
+    })
 }

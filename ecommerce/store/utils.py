@@ -153,3 +153,44 @@ def getTrackInfoList(order_status: int):
     
     print(f'from GET-TRACK-INFO-LIST..... track_info_list[0] = {track_info_list[0].title}, {track_info_list[0].is_completed}, {track_info_list[0].icon}')
     return track_info_list
+
+
+
+def getCartItemList(request, products, cookieData):
+    cartItemList = []
+    cartItems = cookieData['items']
+    for product in products:
+        isNotFound = True
+        for item in cartItems:
+            if isSame(request, product, item):
+                isNotFound = False
+                cartItemList.append({ 'quantity': getQuantity(request, item) })
+                break
+        if isNotFound:
+            cartItemList.append({ 'quantity': 0 })
+    return cartItemList
+
+
+def isSame(request, product, item):
+    if request.user.is_authenticated:
+        return product == item.product
+    else:
+        return product == item['product']
+    
+    
+def getQuantity(request, item):
+    if request.user.is_authenticated:
+        return item.quantity
+    else:
+        return item['quantity']
+
+
+def getStockInfoList(products):
+    stockInfoList = []
+    for product in products:
+        stockItem = Stock.objects.filter(product=product).first()
+        if stockItem is not None:
+            stockInfoList.append({ 'effectiveOrderLimit': stockItem.effective_order_limit })
+        else:
+            stockInfoList.append({ 'effectiveOrderLimit': 0 })
+    return stockInfoList
