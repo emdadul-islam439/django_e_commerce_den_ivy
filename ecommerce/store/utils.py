@@ -175,7 +175,7 @@ def isSame(request, product, item):
     if request.user.is_authenticated:
         return product == item.product
     else:
-        return product == item['product']
+        return product.id == item['product']['id']
     
     
 def getQuantity(request, item):

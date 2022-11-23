@@ -13,7 +13,15 @@ admin.site.register(Product, ProductAdminModel)
       
 admin.site.register(Cart)
 admin.site.register(CartItem)
-admin.site.register(Order)
+
+class OrderAdminModel(admin.ModelAdmin):
+    list_display=["customer", "order_status", "payment_option", "transaction_id", "modified", "created",]
+    list_filter=["order_status", "payment_option",]
+    raw_id_fields=["customer",]
+    search_fields=["customer", "transaction_id",]
+    autocomplete_fields=["customer",]
+admin.site.register(Order, OrderAdminModel)
+
 admin.site.register(OrderItem)
 admin.site.register(ShippingAddress)
 admin.site.register(WishListItem)
@@ -28,11 +36,11 @@ class PurchasedAdminModel(admin.ModelAdmin):
 admin.site.register(PurchasedItem, PurchasedAdminModel)
 
 class SoldAdminModel(admin.ModelAdmin):
-    list_display=["product", "customer", "purchase_price", "unit_price", "discount", "unit_selling_price", "quantity", "total_purchase_price", "total_unit_price", "total_discount", "total_selling_price", "total_profit",]
+    list_display=["product", "order", "purchase_price", "unit_price", "discount", "unit_selling_price", "quantity", "total_purchase_price", "total_unit_price", "total_discount", "total_selling_price", "total_profit",]
     list_filter=["date_added",]
-    raw_id_fields=["product", "customer", ]
-    search_fields=("product", "customer")
-    autocomplete_fields=("product", "customer")
+    raw_id_fields=["product", "order", ]
+    search_fields=["product", "order",]
+    autocomplete_fields=["product", "order",]
 admin.site.register(SoldItem, SoldAdminModel)
 
 class StockAdminModel(admin.ModelAdmin):

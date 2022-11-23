@@ -265,7 +265,7 @@ class PurchasedItem(models.Model):
     
         
 class SoldItem(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
+    order = models.ForeignKey(Order, on_delete=models.PROTECT)
     product = models.OneToOneField(Product, on_delete=models.PROTECT)
     unit_price = models.FloatField(default=0.0)
     purchase_price = models.FloatField(default=0.0)

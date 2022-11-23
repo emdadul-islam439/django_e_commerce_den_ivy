@@ -20,7 +20,7 @@ def store(request):
     
     productInfoList = list(zip(products, cartItemList, stockInfoList))
     
-    print(f'........STORE PAGE......  noOfCartItems = {noOfCartItems}')
+    print(f'........STORE PAGE......  noOfCartItems = {noOfCartItems}  productInfoList={productInfoList}')
     context={ 'productInfoList' : productInfoList, 'noOfCartItems':  noOfCartItems}
     return render(request, 'store/store.html', context)
 
@@ -191,6 +191,15 @@ def processOrder(request):
                 product = item.product,
                 order = order,
                 quantity = item.quantity,
+            )
+            stockInfo = Stock.objects.filter(product=item.product).first()
+            SoldItem.objects.create(
+                order = order,
+                product = item.product,
+                unit_price = stockInfo.current_unit_price,
+                purchase_price = stockInfo.current_purchase_price,
+                quantity = item.quantity,
+                discount = stockInfo.current_discount
             )
             item.delete()
     cart.save()
