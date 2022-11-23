@@ -188,9 +188,20 @@ def getQuantity(request, item):
 def getStockInfoList(products):
     stockInfoList = []
     for product in products:
-        stockItem = Stock.objects.filter(product=product).first()
+        stockItem = Stock.objects.filter(product=product.id).first()
         if stockItem is not None:
             stockInfoList.append({ 'effectiveOrderLimit': stockItem.effective_order_limit })
         else:
             stockInfoList.append({ 'effectiveOrderLimit': 0 })
     return stockInfoList
+
+
+def getProductListFromCartItems(request, items):
+    productList = []
+    for item in items:
+        if request.user.is_authenticated:
+            productList.append(item.product) 
+        else:
+            product = Product.objects.get(id=item['product']['id'])
+            productList.append(product)
+    return productList

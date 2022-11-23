@@ -5,7 +5,7 @@ from store.models import Cart, Product, CartItem, ShippingAddress, WishListItem,
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import datetime
-from . utils import cartData, guestOrder, cookieCart, getWishListItems, getCartItemList, getStockInfoList
+from . utils import cartData, guestOrder, cookieCart, getWishListItems, getCartItemList, getStockInfoList, getProductListFromCartItems
 from django.views.generic import DetailView
 from django.contrib import messages
 
@@ -31,7 +31,12 @@ def cart(request):
     cart = cookieData['cart']
     items = cookieData['items']
     
-    context={ 'items': items, 'cart': cart, 'noOfCartItems':  noOfCartItems }
+    products = getProductListFromCartItems(request, items)
+    stockInfoList = getStockInfoList(products)
+    
+    cartInfoList = list(zip(items, stockInfoList))
+    
+    context={ 'cartInfoList': cartInfoList, 'cart': cart, 'noOfCartItems':  noOfCartItems }
     if not request.user.is_authenticated:
         messages.success(request, "Guest Checkout Feature!! You can now order without Login into the site! If all the cart-items are digital, you will not have to give your shipping address also!")
     return render(request, 'store/cart.html', context)
@@ -44,18 +49,81 @@ def checkout(request):
     items = cookieData['items']
     
     checked_item_count = 0
+    is_all_item_available = True
     for item in items:
         if request.user.is_authenticated:
             if item.is_checked: checked_item_count += 1
-        elif item['is_checked']: checked_item_count += 1
+            
+            stockInfo = Stock.objects.filter(product=item.product).first()
+            if stockInfo.effective_order_limit < item.quantity: 
+                is_all_item_available = False
+        else:
+            if item['is_checked']: checked_item_count += 1
+            
+            product = Product.objects.get(id=item['product']['id'])
+            stockInfo = Stock.objects.filter(product=product).first()
+            if stockInfo.effective_order_limit < item['quantity']: 
+                is_all_item_available = False
         
-    if checked_item_count == 0:
+    if checked_item_count == 0 or not is_all_item_available:
         return redirect('/cart/')
     
     context={ 'items': items, 'cart': cart, 'noOfCartItems':  noOfCartItems }
     if not request.user.is_authenticated:
         messages.success(request, "You can now order from us without Login into the site!")
     return render(request, 'store/checkout.html', context)
+
+
+def updateRegisteredUserCart(request):
+    print(f"updateRegisteredUserCart---> request.body={request.body}")
+    data = json.loads(request.body)
+    
+    cartId = data['cartId']
+    print(f"cartId = {cartId} ")
+    cart, created = Cart.objects.get_or_create(id = cartId)
+    cartItems = CartItem.objects.filter(cart=cart)
+    
+    for item in cartItems:
+        stockInfo = Stock.objects.filter(product=item.product).first()
+        if stockInfo.effective_order_limit == 0:
+            item.is_checked = False
+        else:
+            item.quantity = min(stockInfo.effective_order_limit, item.quantity)
+        item.save()
+    return JsonResponse('OK', safe=False)
+
+
+def updateCookieCart(request):
+    print(f"updateCookieCart---> request.body={request.body}")
+    data = json.loads(request.body)
+    cartItems = data['cart']
+    print(f"cartItems = {cartItems}")
+    
+    for itemIdStr in cartItems:
+        print(f"itemIdStr = {itemIdStr}......  value = {cartItems[itemIdStr]}")
+        product = Product.objects.get(id=itemIdStr)
+        stockInfo = Stock.objects.filter(product=product).first()
+        if stockInfo.effective_order_limit == 0:
+            cartItems[itemIdStr]['is_checked'] = False
+        else:
+            cartItems[itemIdStr]['quantity'] = min(stockInfo.effective_order_limit, cartItems[itemIdStr]['quantity'])
+    
+    data['cart'] = cartItems
+        
+    
+    # cartId = data['cartId']
+    # print(f"cartId = {cartId} ")
+    # cart, created = Cart.objects.get_or_create(id = cartId)
+    # cartItems = CartItem.objects.filter(cart=cart)
+    
+    # for item in cartItems:
+    #     stockInfo = Stock.objects.filter(product=item.product).first()
+    #     if stockInfo.effective_order_limit == 0:
+    #         item.is_checked = False
+    #     else:
+    #         item.quantity = min(stockInfo.effective_order_limit, item.quantity)
+    #     item.save()
+    return JsonResponse(data, safe=False)
 
 
 # @csrf_exempt

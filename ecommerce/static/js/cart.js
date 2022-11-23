@@ -115,3 +115,65 @@ for(i=0; i<viewBtns.length; i++){
         document.getElementById("img-id-"+counter).style.opacity = 1.0
     })
 }
+
+
+document.getElementById('update-cart-button').addEventListener('click', function(){
+    var cartId = this.dataset.cart 
+    console.log('UPDATE-CART....  USER: ', user)
+    if(user == 'AnonymousUser'){
+        updateCookieCart()
+    }else{
+        updateRegisteredUserCart(cartId)
+    }
+})
+
+function updateRegisteredUserCart(cartId){
+    url = '/update-registered-user-cart/'
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type' : 'application/json',
+            'X-CSRFToken': csrftoken,
+        },
+        body: JSON.stringify({
+            'cartId': cartId 
+        })
+    })
+
+    .then((response) => {
+        return response.json()
+    })
+
+    .then((data)=>{
+        console.log('data:', data)
+        location.reload()
+    })
+}
+
+function updateCookieCart(){
+    url = '/update-cookie-cart/'
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type' : 'application/json',
+            'X-CSRFToken': csrftoken,
+        },
+        body: JSON.stringify({
+            'cart': cart 
+        })
+    })
+
+    .then((response) => {
+        return response.json()
+    })
+
+    .then((data)=>{
+        console.log('cart: ', cart)
+        console.log('data[cart]:', data['cart'])
+        cart = data['cart']
+        document.cookie = 'cart=' + JSON.stringify(cart) + ';domain=;path=/'
+        location.reload()
+    })
+}
