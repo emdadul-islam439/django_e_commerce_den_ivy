@@ -308,7 +308,7 @@ class SoldItem(models.Model):
 
 class Stock(models.Model):
     product = models.OneToOneField(Product, on_delete=models.PROTECT)
-    current_discount = models.FloatField()
+    current_discount = models.FloatField(default=0.0)
     order_limit = models.IntegerField(default=50)
     
     
