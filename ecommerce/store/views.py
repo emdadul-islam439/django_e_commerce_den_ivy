@@ -161,10 +161,11 @@ def UpdateItem(request):
 
 
 def processOrder(request):
-    print('Data: ', request.body)
-    transaction_id = datetime.datetime.now().timestamp()
+    print('request.body: ', request.body)
     data = json.loads(request.body)
-    print(f"Data : {data}")
+    print(f"data : {data}")
+    
+    transaction_id = datetime.datetime.now().timestamp()
     
     if request.user.is_authenticated:
         customer = request.user.customer

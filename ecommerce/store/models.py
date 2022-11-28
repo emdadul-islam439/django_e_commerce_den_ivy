@@ -242,7 +242,7 @@ class WishListItem(models.Model):
     
     
 class PurchasedItem(models.Model):
-    product = models.OneToOneField(Product, on_delete=models.PROTECT)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
     unit_price = models.FloatField()
     purchase_price = models.FloatField()
     quantity = models.IntegerField(default = 0)
@@ -266,7 +266,7 @@ class PurchasedItem(models.Model):
         
 class SoldItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.PROTECT)
-    product = models.OneToOneField(Product, on_delete=models.PROTECT)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
     unit_price = models.FloatField(default=0.0)
     purchase_price = models.FloatField(default=0.0)
     quantity = models.IntegerField(default = 0)
