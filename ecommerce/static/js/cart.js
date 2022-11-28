@@ -1,6 +1,5 @@
 var updateBtns = document.getElementsByClassName('update-cart')
 console.log('updateBtns.length = ', updateBtns.length)
-
 for(i = 0; i < updateBtns.length; i++){
     updateBtns[i].addEventListener('click', function(){
         var productId = this.dataset.product 
@@ -16,7 +15,6 @@ for(i = 0; i < updateBtns.length; i++){
         }
     })
 }
-
 
 function updateUserOrder(productId, action){
     console.log('User is authenticated, sending data...')
@@ -46,7 +44,6 @@ function updateUserOrder(productId, action){
         location.reload()
     })
 }
-
 
 function updateCookieItem(productId, action){
     console.log('User is not logged in...')
@@ -78,7 +75,6 @@ function updateCookieItem(productId, action){
 
 var cannotAddBtns = document.getElementsByClassName('cannot-add-btn')
 console.log('cannotAddBtns.length = ', cannotAddBtns.length)
-
 for(i = 0; i < cannotAddBtns.length; i++){
     cannotAddBtns[i].addEventListener('click', function(){
         alert('Order Limit reached! Cannot add more!')
@@ -100,6 +96,7 @@ for(i=0; i<fadeInImages.length; i++){
         document.getElementById("view-btn-id-"+counter).classList.add("hidden")
     })
 }
+
 
 var viewBtns = document.getElementsByClassName('view-btn')
 console.log('viewBtns.length = ', viewBtns.length)

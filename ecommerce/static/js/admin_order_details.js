@@ -1,5 +1,4 @@
 var csrftoken = getToken('csrftoken');
-
 function getToken(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie != '') {
@@ -15,6 +14,7 @@ function getToken(name) {
     }
     return cookieValue;
 }
+
 
 document.getElementById("order-status").addEventListener("change", function(e){
     prepareChangingStatus(this.value, this, this.dataset.order)
@@ -70,7 +70,6 @@ function getSelectedIndex(text, valueList){
 }
 
 
-
 var updateBtns = document.getElementsByClassName('update-admin-order-item')
 console.log('updateBtns.length = ', updateBtns.length)
 
@@ -82,7 +81,6 @@ for(i = 0; i < updateBtns.length; i++){
         updateAdminOrderItem(itemId, action)
     })
 }
-
 
 function updateAdminOrderItem(itemId, action){
     var quantity = getItemQuantity(itemId)
@@ -123,7 +121,6 @@ function getItemQuantity(itemId){
 }
 
 
-
 var removeBtns = document.getElementsByClassName('rmv-admin-order-item-btn')
 console.log('removeBtns.length = ', removeBtns.length)
 
@@ -135,7 +132,6 @@ for(i = 0; i < removeBtns.length; i++){
         removeAdminOrderItem(itemId, itemCount)
     })
 }
-
 
 function removeAdminOrderItem(itemId, itemCount){
     if(itemCount <= 1){
@@ -178,9 +174,8 @@ document.getElementById("btn-add-all").addEventListener("click", function(e){
             checkedProductIdList[j++] = parseInt(checkBox.value)
         }
     }
-
     console.log("checkedItemIdList.length="+checkedProductIdList.length+";   productCheckBoxes.length = "+productCheckBoxes.length)
-
+    
     clearCheckBoxes(productCheckBoxes)
     addProductListIntoOrder(checkedProductIdList)
 })

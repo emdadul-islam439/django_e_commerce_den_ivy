@@ -1,5 +1,4 @@
 var csrftoken = getToken('csrftoken');
-
 function getToken(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie != '') {
@@ -15,7 +14,6 @@ function getToken(name) {
     }
     return cookieValue;
 }
-
 
 
 var updateBtns = document.getElementsByClassName('update-admin-cart-item')
@@ -70,7 +68,6 @@ function getItemQuantity(itemId){
 }
 
 
-
 var removeBtns = document.getElementsByClassName('rmv-admin-cart-item-btn')
 console.log('removeBtns.length = ', removeBtns.length)
 
@@ -85,13 +82,7 @@ for(i = 0; i < removeBtns.length; i++){
 
 
 function removeAdminCartItem(itemId, itemCount){
-    // if(itemCount <= 1){
-    //     alert("Cart items count has to be more than 0!")
-    //     return;
-    // }
-
     url = 'remove-admin-cart-item/'
-
     fetch(url, {
         method: 'POST',
         headers: {
@@ -102,11 +93,9 @@ function removeAdminCartItem(itemId, itemCount){
             'itemId': itemId
         })
     })
-
     .then((response) => {
         return response.json()
     })
-
     .then((data)=>{
         console.log('data:', data)
         location.reload()
