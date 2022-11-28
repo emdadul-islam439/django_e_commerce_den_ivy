@@ -16,8 +16,9 @@ Including another URLconf
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
-from customers import views as customer_views
 from django.contrib.auth import views as auth_views
+
+from customers import views as customer_views
 
 urlpatterns = [
     path('admin/', include("admin.urls")),
@@ -30,5 +31,5 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(template_name = "customers/logout.html"), name = "logout"),
     path("", include("store.urls"))
 ]
- 
+
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
