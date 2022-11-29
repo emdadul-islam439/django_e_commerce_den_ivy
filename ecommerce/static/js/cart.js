@@ -19,8 +19,7 @@ for(i = 0; i < updateBtns.length; i++){
 function updateUserOrder(productId, action){
     console.log('User is authenticated, sending data...')
 
-    url = '/update_item/'
-
+    url = '/update-item/'
     // var form = document.getElementById('form')
     // var csrftoken = form.getElementsByTagName('input')[0].value
 

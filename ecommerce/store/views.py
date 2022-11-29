@@ -1,55 +1,51 @@
-import json
-from statistics import quantiles
 from django.shortcuts import render, redirect
-from store.models import Cart, Product, CartItem, ShippingAddress, WishListItem, Order, OrderItem, Stock, PurchasedItem, SoldItem
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-import datetime
-from . utils import cartData, guestOrder, cookieCart, getWishListItems, getCartItemList, getStockInfoList, getProductListFromCartItems
 from django.views.generic import DetailView
 from django.contrib import messages
 
+import datetime
+import json
+from statistics import quantiles
+
+from . utils import cartData, guestOrder, cookieCart, getWishListItems, getCartItemList, getStockInfoList, getProductListFromCartItems
+from store.models import Cart, Product, CartItem, ShippingAddress, WishListItem, Order, OrderItem, Stock, PurchasedItem, SoldItem
+
+
 # Create your views here.
 def store(request):
-    cookieData = cartData(request = request)
-    noOfCartItems = cookieData['noOfCartItems']
-        
+    cookieData = cartData(request=request)
     products = Product.objects.all()
     cartItemList = getCartItemList(request, products, cookieData)
     stockInfoList = getStockInfoList(products)
     
     productInfoList = list(zip(products, cartItemList, stockInfoList))
-    
-    print(f'........STORE PAGE......  noOfCartItems = {noOfCartItems}  productInfoList={productInfoList}')
-    context={ 'productInfoList' : productInfoList, 'noOfCartItems':  noOfCartItems}
+    print(f"........STORE PAGE......  noOfCartItems = {cookieData['noOfCartItems']}  productInfoList={productInfoList}")
+    context={'productInfoList' : productInfoList, 'noOfCartItems':  cookieData['noOfCartItems']}
     return render(request, 'store/store.html', context)
 
 
 def cart(request):
-    cookieData = cartData(request = request)
-    noOfCartItems = cookieData['noOfCartItems']
-    cart = cookieData['cart']
+    cookieData = cartData(request=request)
     items = cookieData['items']
     
     products = getProductListFromCartItems(request, items)
     stockInfoList = getStockInfoList(products)
     
     cartInfoList = list(zip(items, stockInfoList))
+    context={'cartInfoList': cartInfoList, 'cart': cookieData['cart'], 'noOfCartItems':  cookieData['noOfCartItems']}
     
-    context={ 'cartInfoList': cartInfoList, 'cart': cart, 'noOfCartItems':  noOfCartItems }
     if not request.user.is_authenticated:
         messages.success(request, "Guest Checkout Feature!! You can now order without Login into the site! If all the cart-items are digital, you will not have to give your shipping address also!")
     return render(request, 'store/cart.html', context)
 
 
 def checkout(request):
-    cookieData = cartData(request = request)
-    noOfCartItems = cookieData['noOfCartItems']
-    cart = cookieData['cart']
+    cookieData = cartData(request=request)
     items = cookieData['items']
-    
     checked_item_count = 0
     is_all_item_available = True
+    
     for item in items:
         if request.user.is_authenticated:
             if item.is_checked: checked_item_count += 1
@@ -68,7 +64,7 @@ def checkout(request):
     if checked_item_count == 0 or not is_all_item_available:
         return redirect('/cart/')
     
-    context={ 'items': items, 'cart': cart, 'noOfCartItems':  noOfCartItems }
+    context={ 'items': items, 'cart': cookieData['cart'], 'noOfCartItems':  cookieData['noOfCartItems'] }
     if not request.user.is_authenticated:
         messages.success(request, "You can now order from us without Login into the site!")
     return render(request, 'store/checkout.html', context)
@@ -77,10 +73,9 @@ def checkout(request):
 def updateRegisteredUserCart(request):
     print(f"updateRegisteredUserCart---> request.body={request.body}")
     data = json.loads(request.body)
+    print(f"cartId = {data['cartId']} ")
     
-    cartId = data['cartId']
-    print(f"cartId = {cartId} ")
-    cart, created = Cart.objects.get_or_create(id = cartId)
+    cart, created = Cart.objects.get_or_create(id=data['cartId'])
     cartItems = CartItem.objects.filter(cart=cart)
     
     for item in cartItems:
@@ -89,7 +84,7 @@ def updateRegisteredUserCart(request):
             item.is_checked = False
         else:
             item.quantity = min(stockInfo.effective_order_limit, item.quantity)
-        item.save()
+        item.save(update_fields=['is_checked', 'quantity'])
     return JsonResponse('OK', safe=False)
 
 
@@ -109,36 +104,18 @@ def updateCookieCart(request):
             cartItems[itemIdStr]['quantity'] = min(stockInfo.effective_order_limit, cartItems[itemIdStr]['quantity'])
     
     data['cart'] = cartItems
-        
-    
-    # cartId = data['cartId']
-    # print(f"cartId = {cartId} ")
-    # cart, created = Cart.objects.get_or_create(id = cartId)
-    # cartItems = CartItem.objects.filter(cart=cart)
-    
-    # for item in cartItems:
-    #     stockInfo = Stock.objects.filter(product=item.product).first()
-    #     if stockInfo.effective_order_limit == 0:
-    #         item.is_checked = False
-    #     else:
-    #         item.quantity = min(stockInfo.effective_order_limit, item.quantity)
-    #     item.save()
     return JsonResponse(data, safe=False)
 
 
 # @csrf_exempt
-def UpdateItem(request):
+def updateItem(request):
     data = json.loads(request.body)
     
     action = data['action']
-    productId = data['productId']
+    print(f"in UpdateItem()--->    action = {action}")
     
-    print(f"productId = {productId} ")
-    print(f"action = {action}")
-    
-    customer = request.user.customer
-    product = Product.objects.get(id = productId)
-    cart, created = Cart.objects.get_or_create(customer = customer)
+    product = Product.objects.get(id=data['productId'])
+    cart, created = Cart.objects.get_or_create(customer=request.user.customer)
     cartItem, created = CartItem.objects.get_or_create(cart=cart, product=product)
     
     if action == 'add':
@@ -151,13 +128,11 @@ def UpdateItem(request):
         cartItem.is_checked = not cartItem.is_checked
         response_message = 'Item was CHECKED/UNCHECKED successfully'
     
-    cartItem.save()
-    
+    cartItem.save(update_fields=['quantity', 'is_checked'])
     if cartItem.quantity <= 0:
         cartItem.delete()
     
     return JsonResponse(response_message, safe=False)
-
 
 
 def processOrder(request):
@@ -169,80 +144,73 @@ def processOrder(request):
     
     if request.user.is_authenticated:
         customer = request.user.customer
-        cart, created = Cart.objects.get_or_create(customer = customer)
+        cart, created = Cart.objects.get_or_create(customer=customer)
     else:
-        customer, cart = guestOrder(request= request, data= data)
+        customer, cart = guestOrder(request=request, data=data)
         
     total = float(data['form']['total'])
-    cart.transaction_id = transaction_id
     
     if total == cart.get_cart_total:
         now_time = datetime.datetime.now()
         print(f'now_time = {now_time}  type(now_time) = {type(now_time)}')
-        cart.modified = now_time
         
         order = Order.objects.create(
-            customer = customer,
-            transaction_id = transaction_id
+            customer=customer,
+            transaction_id=transaction_id
         )
         
-        cartItems = CartItem.objects.filter(cart = cart, is_checked = True)
+        cartItems = CartItem.objects.filter(cart=cart, is_checked=True)
         for item in cartItems:
             OrderItem.objects.create(
-                product = item.product,
-                order = order,
-                quantity = item.quantity,
+                product=item.product,
+                order=order,
+                quantity=item.quantity,
             )
             stockInfo = Stock.objects.filter(product=item.product).first()
             SoldItem.objects.create(
-                order = order,
-                product = item.product,
-                unit_price = stockInfo.current_unit_price,
-                purchase_price = stockInfo.current_purchase_price,
-                quantity = item.quantity,
-                discount = stockInfo.current_discount
+                order=order,
+                product=item.product,
+                unit_price=stockInfo.current_unit_price,
+                purchase_price=stockInfo.current_purchase_price,
+                quantity=item.quantity,
+                discount=stockInfo.current_discount
             )
             item.delete()
-    cart.save()
     
     if cart.shipping == True:
         ShippingAddress.objects.create( 
-            customer = customer,
-            order = order,
-            address = data['shipping']['address'],
-            city = data['shipping']['city'],
-            state = data['shipping']['state'],
-            zipcode = data['shipping']['zipcode'],
+            customer=customer,
+            order=order,
+            address=data['shipping']['address'],
+            city=data['shipping']['city'],
+            state=data['shipping']['state'],
+            zipcode=data['shipping']['zipcode'],
         )
     return JsonResponse(f'{order.id}', safe=False)
 
 
-
 def completePayment(request):
-    print(f'in complete-payment function:  data = {request.body}')
+    print(f'in completePayment():  data = {request.body}')
     data = json.loads(request.body)
     print(f'data after json-decode = {data}')
     
-    order_id = data['order_id']
-    order, created = Order.objects.get_or_create(id = order_id)
+    order, created = Order.objects.get_or_create(id=data['order_id'])
     order.order_status = 1
-    order.save()
+    order.save(update_fields=['order_status'])
     
     return JsonResponse(f"success", safe=False) 
     
 
 def updateWishList(request):
-    print('Data: ', request.body)
-    
+    print('in updateWishList() --->  Data: ', request.body)
     data = json.loads(request.body)
     print(f"Data : {data}")
     response = ''
     
     if request.user.is_authenticated:
         customer = request.user.customer
-        product_id = data['productId']
-        product = Product.objects.get(id = product_id)
-        print(f'customer = {customer} | product_id = {product_id} | product.name = {product.name} ')
+        product = Product.objects.get(id=data['productId'])
+        print(f"customer = {customer} | product_id = {data['productId']} | product.name = {product.name} ")
         wishListItem, created = WishListItem.objects.get_or_create(customer = customer, product = product)
         
         if data['action'] == 'add':
@@ -258,7 +226,7 @@ def updateWishList(request):
 
 
 class ProductDetailView(DetailView):
-    template_name: str = "store/product-details.html"
+    template_name: str = "store/product_details.html"
     context_object_name: str = "product"
     model = Product
     
@@ -269,13 +237,12 @@ class ProductDetailView(DetailView):
         context['isInWishlist'] = self.is_in_wishlist
         return context
     
-    
     def get(self, request, *args, **kwargs):
-        self.cookieData = cartData(request = request)
+        self.cookieData = cartData(request=request)
         self.noOfCartItems = self.cookieData['noOfCartItems']
         self.items = self.cookieData['items']
         self.product_id = self.kwargs.get('pk')
-        self.user_wishlist = [] if (request.user.is_anonymous) else WishListItem.objects.filter(product__id = self.product_id, customer = request.user.customer)
+        self.user_wishlist = [] if (request.user.is_anonymous) else WishListItem.objects.filter(product__id=self.product_id, customer=request.user.customer)
         self.is_in_wishlist = len(self.user_wishlist) > 0
         
         found_item = False
@@ -294,32 +261,27 @@ class ProductDetailView(DetailView):
     
     
 def stockItemList(request):
-    cookieData = cartData(request = request)
-    noOfCartItems = cookieData['noOfCartItems']
-        
+    cookieData = cartData(request=request)
     products = Stock.objects.all()
-    print(f'........STORE PAGE......  noOfCartItems = {noOfCartItems}')
-    context={ 'stockItemList' : products, 'noOfCartItems':  noOfCartItems}
+    print(f"........STORE PAGE......  noOfCartItems = {cookieData['noOfCartItems']}")
+    
+    context={ 'stockItemList' : products, 'noOfCartItems':  cookieData['noOfCartItems']}
     return render(request, "admin/store/stock/admin_stock_item_list.html", context)
 
 
-
 def purchasedItemList(request):
-    cookieData = cartData(request = request)
-    noOfCartItems = cookieData['noOfCartItems']
-        
+    cookieData = cartData(request=request)
     products = PurchasedItem.objects.all()
-    print(f'........STORE PAGE......  noOfCartItems = {noOfCartItems}')
-    context={ 'purchasedItemsList' : products, 'noOfCartItems':  noOfCartItems}
+    print(f"........STORE PAGE......  noOfCartItems = {cookieData['noOfCartItems']}")
+    
+    context={ 'purchasedItemsList' : products, 'noOfCartItems':  cookieData['noOfCartItems']}
     return render(request, "admin/store/purchaseditem/admin_purchased_item_list.html", context)
 
 
-
 def soldItemList(request):
-    cookieData = cartData(request = request)
-    noOfCartItems = cookieData['noOfCartItems']
-        
+    cookieData = cartData(request=request)
     products = SoldItem.objects.all()
-    print(f'........STORE PAGE......  noOfCartItems = {noOfCartItems}')
-    context={ 'soldItemsList' : products, 'noOfCartItems':  noOfCartItems}
+    print(f"........STORE PAGE......  noOfCartItems = {cookieData['noOfCartItems']}")
+          
+    context={ 'soldItemsList' : products, 'noOfCartItems':  cookieData['noOfCartItems']}
     return render(request, "admin/store/solditem/admin_sold_item_list.html", context)

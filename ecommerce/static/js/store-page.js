@@ -29,7 +29,7 @@ for(i = 0; i < wishItemButtons.length; i++){
 function updateWishListItem(productId, action){
     console.log('User is authenticated, sending data...')
 
-    url = '/update_wish_list/'
+    url = '/update-wishlist/'
 
     fetch(url, {
         method: 'POST',

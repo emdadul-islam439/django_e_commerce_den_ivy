@@ -1,6 +1,3 @@
-from email.policy import default
-from random import choices
-from tabnanny import verbose
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -10,7 +7,7 @@ class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, default='', related_name='customer', null=True)
     name = models.CharField(max_length=200, null=True)
     email = models.EmailField(max_length=200, null=True)
-    image = models.ImageField(default = 'default.png', upload_to = "profile_pics")
+    image = models.ImageField(default='default.png', upload_to="profile_pics")
     
     def __str__(self) -> str:
         return str(self.user)
@@ -26,7 +23,6 @@ class Product(models.Model):
     def __str__(self) -> str:
         return self.name
   
-    
     @property
     def imageURL(self):
         try:
@@ -36,50 +32,32 @@ class Product(models.Model):
         
         return url
     
-    
     @property
     def isInWishlist(self):
         wishlist_items = self.wishlistitem_set.all()
-        if len(wishlist_items) > 0:
-            return "True" 
-        else:
-            return "False"
-    
+        return len(wishlist_items) > 0
     
     @property
-    def wishlist_item_customer_list(self):
-        wishlist_items = self.wishlistitem_set.all()
-        print('wishlist_items: ', wishlist_items)
-        
-        customer_list = []
-        for wish_item in wishlist_items:
-            print('adding customer.user = ', wish_item.customer)
-            customer_list.append(wish_item.customer)
-        
-        print('returning...  user_list = ', customer_list)
-        return customer_list
-    
+    def wishlist_item_customer_id_list(self):
+        customer_id_list = self.wishlistitem_set.values_list('customer', flat=True)
+        print('returning...  user_id_list = ', customer_id_list)
+        return customer_id_list
     
     @property
     def get_current_unit_price(self):
-        stock_info = self.stock_set.all().first()
-        return stock_info.current_unit_price
+        return self.stock_set.all().first().current_unit_price
     
     @property
     def get_current_discount(self):
-        stock_info = self.stock_set.all().first()
-        return stock_info.current_discount
+        return self.stock_set.all().first().current_discount
     
     @property
     def get_current_selling_price(self):
-        stock_info = self.stock_set.all().first()
-        return stock_info.get_current_selling_price
+        return self.stock_set.all().first().get_current_selling_price
     
     @property
     def get_stock_info(self):
-        stock_info = self.stock_set.all().first()
-        return stock_info
-    
+        return self.stock_set.all().first()
     
     
 class Cart(models.Model):
@@ -104,22 +82,18 @@ class Cart(models.Model):
     
     @property
     def get_cart_total(self):
-        cart_items = self.cartitem_set.filter(is_checked = True)
-        total = sum([item.get_total for item in cart_items])
-        return total 
+        cart_items = self.cartitem_set.filter(is_checked=True)
+        return sum([item.get_total for item in cart_items]) 
     
     @property
     def get_all_cart_item_count(self):
         cart_items = self.cartitem_set.all()
-        total = sum([item.quantity for item in cart_items])
-        return total 
+        return sum([item.quantity for item in cart_items]) 
     
     @property
     def get_checked_item_count(self):
-        cart_items = self.cartitem_set.filter(is_checked = True)
-        total = sum([item.quantity for item in cart_items])
-        return total 
-    
+        cart_items = self.cartitem_set.filter(is_checked=True)
+        return sum([item.quantity for item in cart_items])
     
     
 class CartItem(models.Model):
@@ -138,10 +112,8 @@ class CartItem(models.Model):
     
     @property
     def get_stock_info(self):
-        stock_item = Stock.objects.all().first()
-        return stock_item
+        return Stock.objects.get(product=self.product)
     
-
 
 class Order(models.Model):
     STATUS_CHOICES = (
@@ -152,7 +124,6 @@ class Order(models.Model):
         (4, 'Order is Delivered'),
         (5, 'Cancelled')
     )
-    
     PAYMENT_OPTION_CHOICES = (
         ('Cash On Delivery', 'Cash On Delivery'),
         ('Bkash', 'Bkash'),
@@ -200,7 +171,6 @@ class Order(models.Model):
         total = sum([item.quantity for item in order_items])
         return total 
 
-        
     
 class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
@@ -216,7 +186,6 @@ class OrderItem(models.Model):
         return self.quantity * self.product.price
         
     
-
 class ShippingAddress(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True, blank=True)
@@ -230,7 +199,6 @@ class ShippingAddress(models.Model):
         return self.address
     
     
-    
 class WishListItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
@@ -238,7 +206,6 @@ class WishListItem(models.Model):
     
     def __str__(self) -> str:
         return f'WishListItem: product-name = {self.product.name} | customer = {self.customer}'
-    
     
     
 class PurchasedItem(models.Model):
@@ -261,7 +228,6 @@ class PurchasedItem(models.Model):
     @property
     def total_purchase_price(self):
         return self.purchase_price * self.quantity
-    
     
         
 class SoldItem(models.Model):
@@ -305,12 +271,10 @@ class SoldItem(models.Model):
         return self.unit_profit * self.quantity
     
     
-
 class Stock(models.Model):
     product = models.OneToOneField(Product, on_delete=models.PROTECT)
     current_discount = models.FloatField(default=0.0)
     order_limit = models.IntegerField(default=50)
-    
     
     def __str__(self) -> str:
         return f'Stock: product-name = {self.product.name}'
@@ -320,7 +284,6 @@ class Stock(models.Model):
         all_purchased_items = PurchasedItem.objects.filter(product=self.product)
         total_purchase_count = len(all_purchased_items)
         return 0 if total_purchase_count == 0 else all_purchased_items[total_purchase_count - 1].unit_price
-        
     
     @property
     def current_selling_price(self):
@@ -336,7 +299,7 @@ class Stock(models.Model):
     def avg_purchase_price(self):
         all_purchased_items = PurchasedItem.objects.filter(product=self.product)
         total_purchase_count = len(all_purchased_items)
-        
+
         sum_of_purchase_price = sum([item.purchase_price for item in all_purchased_items]) if total_purchase_count > 0 else 0
         return 0 if total_purchase_count == 0 else sum_of_purchase_price / total_purchase_count
     
@@ -360,15 +323,13 @@ class Stock(models.Model):
     @property
     def no_of_purchased_unit(self):
         all_purchased_items = PurchasedItem.objects.filter(product=self.product)
-        sum_of_purchase_quantity = sum([item.quantity for item in all_purchased_items]) if len(all_purchased_items) > 0 else 0
-        return sum_of_purchase_quantity
+        return sum([item.quantity for item in all_purchased_items]) if len(all_purchased_items) > 0 else 0
         
     
     @property 
     def no_of_sold_unit(self):
         all_sold_items = SoldItem.objects.filter(product=self.product)
-        sum_of_sold_unit = sum([item.quantity for item in all_sold_items]) if len(all_sold_items) > 0 else 0
-        return sum_of_sold_unit
+        return sum([item.quantity for item in all_sold_items]) if len(all_sold_items) > 0 else 0
     
     
     @property

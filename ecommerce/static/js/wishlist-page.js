@@ -23,7 +23,7 @@ for(i = 0; i < wishListButtons.length; i++){
 function removeFromWishList(productId, action){
     console.log('User is authenticated, sending data...')
 
-    url = '/update_wish_list/'
+    url = '/update-wishlist/'
 
     fetch(url, {
         method: 'POST',

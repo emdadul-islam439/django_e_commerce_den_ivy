@@ -1,5 +1,6 @@
 import json
 from math import prod
+
 from . models import *
 
 def cookieCart(request):
@@ -21,7 +22,7 @@ def cookieCart(request):
         try:
             noOfCartItems += temp_cart[id]['quantity']
 
-            product = Product.objects.get(id= id)
+            product = Product.objects.get(id=id)
             total = (product.price * temp_cart[id]['quantity'])
             
             if temp_cart[id]['is_checked']:
@@ -56,11 +57,11 @@ def cookieCart(request):
 def cartData(request):
     if request.user.is_authenticated:
         customer = request.user.customer
-        cart, created = Cart.objects.get_or_create(customer = customer)
+        cart, created = Cart.objects.get_or_create(customer=customer)
         items = cart.cartitem_set.all()
         noOfCartItems = cart.get_all_cart_item_count
     else:
-        cookieData = cookieCart(request = request)
+        cookieData = cookieCart(request=request)
         noOfCartItems = cookieData['noOfCartItems']
         cart = cookieData['cart']
         items = cookieData['items']
@@ -74,34 +75,29 @@ def cartData(request):
     
 def guestOrder(request, data):
     print('User is not authenticated....')
-        
     print('COOKIES:', request.COOKIES)
     name = data['form']['name']
     email = data['form']['email']
     
-    
-    cookieData = cookieCart(request= request)
-    items = cookieData['items']
-    
     customer, created = Customer.objects.get_or_create(
-        email = email,
+        email=email
     )
     customer.name = name 
-    customer.save()
+    customer.save(update_fields=['name'])
     
-    cart = Cart.objects.create(
-        customer = customer
-    )
+    cart = Cart.objects.create(customer=customer)
     
+    cookieData = cookieCart(request=request)
+    items = cookieData['items']
     for item in items:
         if item['is_checked'] == False: 
             continue
         
-        product = Product.objects.get(id= item['product']['id'])
+        product = Product.objects.get(id=item['product']['id'])
         cartItem = CartItem.objects.create(
-            product = product,
-            cart = cart,
-            quantity = item['quantity']
+            product=product,
+            cart=cart,
+            quantity=item['quantity']
         )
 
     return customer, cart
@@ -150,15 +146,15 @@ def getTrackInfoList(order_status: int):
         is_completed = i <= order_status
         track_info_list.append(TrackItem(title_tuple[i], is_completed, icon_tuple[i]))
         i += 1
-    
+        
     print(f'from GET-TRACK-INFO-LIST..... track_info_list[0] = {track_info_list[0].title}, {track_info_list[0].is_completed}, {track_info_list[0].icon}')
     return track_info_list
-
 
 
 def getCartItemList(request, products, cookieData):
     cartItemList = []
     cartItems = cookieData['items']
+    
     for product in products:
         isNotFound = True
         for item in cartItems:
@@ -168,6 +164,7 @@ def getCartItemList(request, products, cookieData):
                 break
         if isNotFound:
             cartItemList.append({ 'quantity': 0 })
+            
     return cartItemList
 
 
@@ -187,21 +184,25 @@ def getQuantity(request, item):
 
 def getStockInfoList(products):
     stockInfoList = []
+    
     for product in products:
         stockItem = Stock.objects.filter(product=product.id).first()
         if stockItem is not None:
             stockInfoList.append({ 'effectiveOrderLimit': stockItem.effective_order_limit })
         else:
             stockInfoList.append({ 'effectiveOrderLimit': 0 })
+            
     return stockInfoList
 
 
 def getProductListFromCartItems(request, items):
     productList = []
+    
     for item in items:
         if request.user.is_authenticated:
             productList.append(item.product) 
         else:
             product = Product.objects.get(id=item['product']['id'])
             productList.append(product)
+            
     return productList

@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.urls import path
+
 from store import views as store_views
 from customers import views as customer_views
-from store.views import ProductDetailView
 
 urlpatterns = [
     path('', customer_views.redirectUser, name = 'redirect'),
@@ -14,9 +14,9 @@ urlpatterns = [
     path('checkout/', store_views.checkout, name = 'checkout'),
     path('update-registered-user-cart/', store_views.updateRegisteredUserCart, name = 'update-registered-user-cart'),
     path('update-cookie-cart/', store_views.updateCookieCart, name = 'update-cookie-cart'),
-    path('update_item/', store_views.UpdateItem, name = 'update_item'),
-    path('process_order/', store_views.processOrder, name = 'process_order'),
-    path('complete_payment/', store_views.completePayment, name = 'complete_payment'),
-    path('update_wish_list/', store_views.updateWishList, name = 'update_wish_list'),
-    path('product-details/<int:pk>', ProductDetailView.as_view(), name = 'producut-details'),
-]
+    path('update-item/', store_views.updateItem, name = 'update-item'),
+    path('process-order/', store_views.processOrder, name = 'process-order'),
+    path('complete-payment/', store_views.completePayment, name = 'complete-payment'),
+    path('update-wishlist/', store_views.updateWishList, name = 'update-wishlist'),
+    path('product-details/<int:pk>', store_views.ProductDetailView.as_view(), name = 'producut-details'),
+]   

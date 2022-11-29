@@ -1280,7 +1280,7 @@
         * function updateUserOrder(productId, action){
         *        console.log('User is authenticated, sending data...')
         *
-        *        url = '/update_item/' ------------------- (1)
+        *        url = '/update-item/' ------------------- (1)
         *
         *        // var form = document.getElementById('form')
         *        // var csrftoken = form.getElementsByTagName('input')[0].value
@@ -1310,7 +1310,7 @@
             * def UpdateItem(request):
             *     return JsonResponse('Item was added', safe=False)
         - urls.py:
-            * path('update_item/', views.UpdateItem, name = 'update_item')
+            * path('update-item/', views.UpdateItem, name = 'update-item')
     
     -> for (2), in the 'main.html' file add this function 
         * <script type="text/javascript">
@@ -1509,7 +1509,7 @@
             * function updateWishList(productId, action, wishIcons){
             *     console.log('User is authenticated, sending data...')
             * 
-            *     url = '/update_wish_list/'
+            *     url = '/update-wishlist/'
             * 
             *     fetch(url, {
             *         method: 'POST',
@@ -1596,7 +1596,7 @@
     * function removeFromWishList(productId, action){
     *     console.log('User is authenticated, sending data...')
     * 
-    *     url = '/update_wish_list/'
+    *     url = '/update-wishlist/'
     * 
     *     fetch(url, {
     *         method: 'POST',
@@ -1822,7 +1822,7 @@
         *     return JsonResponse('Payment Completed...', safe=False)
 
     -> in "urls.py" add this url-path:
-        * path('process_order/', views.processOrder, name = 'process_order'),
+        * path('process-order/', views.processOrder, name = 'process-order'),
 
     -> in "checkout.html", modify '<script>' section:
         * <script type="text/javascript">
@@ -1860,7 +1860,7 @@
         *         }
         *     
         *     
-        *         var url = '/process_order/'
+        *         var url = '/process-order/'
         *         fetch(url, {
         *             method: 'POST',
         *             headers:{
@@ -2120,7 +2120,7 @@
         *     
 
 
-##  moving 'process_order' codes to utils:
+##  moving 'process-order' codes to utils:
     -> in "utils.py" create this function:
         * def guestOrder(request, data):
         *     print('User is not authenticated....')
