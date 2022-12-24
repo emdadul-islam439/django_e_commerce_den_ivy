@@ -22,6 +22,7 @@ from customers import views as customer_views
 
 urlpatterns = [
     path('admin/', include("admin.urls")),
+    path('background-task/', include('background_tasks.urls')),
     path('register/', customer_views.register, name = "register"),
     path('profile/', customer_views.profile, name = "profile"),
     path('wishlist/', customer_views.wishList, name = 'wishlist'),
