@@ -1,8 +1,8 @@
 from django.urls import path
 
-from .views import index
+from .views import test_task
 
 
 urlpatterns = [
-    path('celery-test/',index, name='celery_test_url'),
+    path('celery-test/', test_task, name='celery_test_url'),
 ]
