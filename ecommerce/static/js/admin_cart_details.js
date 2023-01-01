@@ -103,23 +103,26 @@ function removeAdminCartItem(itemId, itemCount){
 }
 
 
-document.getElementById("btn-add-all").addEventListener("click", function(e){
-    var productCheckBoxes = document.getElementsByClassName("add-item-admin-cart")
-    var checkedProductIdList = []
-    var j = 0
+var addAllBtn = document.getElementById("btn-add-all")
+if(addAllBtn != null){
+    addAllBtn.addEventListener("click", function(e){
+        var productCheckBoxes = document.getElementsByClassName("add-item-admin-cart")
+        var checkedProductIdList = []
+        var j = 0
 
-    for(var checkBox of productCheckBoxes){
-        if(checkBox.checked){
-            console.log("checkbox.checked....  checkbox.value = "+checkBox.value+";")
-            checkedProductIdList[j++] = parseInt(checkBox.value)
+        for(var checkBox of productCheckBoxes){
+            if(checkBox.checked){
+                console.log("checkbox.checked....  checkbox.value = "+checkBox.value+";")
+                checkedProductIdList[j++] = parseInt(checkBox.value)
+            }
         }
-    }
 
-    console.log("checkedItemIdList.length="+checkedProductIdList.length+";   productCheckBoxes.length = "+productCheckBoxes.length)
+        console.log("checkedItemIdList.length="+checkedProductIdList.length+";   productCheckBoxes.length = "+productCheckBoxes.length)
 
-    clearCheckBoxes(productCheckBoxes)
-    addProductListIntoCart(checkedProductIdList)
-})
+        clearCheckBoxes(productCheckBoxes)
+        addProductListIntoCart(checkedProductIdList)
+    })
+}
 
 function addProductListIntoCart(checkedProductIdList){
     if(checkedProductIdList.length == 0){

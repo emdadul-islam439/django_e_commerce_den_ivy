@@ -103,10 +103,12 @@
             }
         })
 
-
-        {% comment %} document.getElementById('make-payment').addEventListener('click', function(e){
-            submitFormData()
-        }) {% endcomment %}
+        var makePaymentBtn = document.getElementById('make-payment')
+        if(makePaymentBtn != null){
+            makePaymentBtn.addEventListener('click', function(e){
+                submitFormData()
+            })
+        }
         function submitFormData(){
             console.log('Payment button clicked...')
 

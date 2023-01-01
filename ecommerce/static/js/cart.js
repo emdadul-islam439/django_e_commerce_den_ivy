@@ -113,15 +113,19 @@ for(i=0; i<viewBtns.length; i++){
 }
 
 
-document.getElementById('update-cart-button').addEventListener('click', function(){
-    var cartId = this.dataset.cart 
-    console.log('UPDATE-CART....  USER: ', user)
-    if(user == 'AnonymousUser'){
-        updateCookieCart()
-    }else{
-        updateRegisteredUserCart(cartId)
-    }
-})
+var updateCartBtn = document.getElementById('update-cart-button')
+if(updateCartBtn != null){
+    updateCartBtn.addEventListener('click', function(){
+        var cartId = this.dataset.cart 
+        console.log('UPDATE-CART....  USER: ', user)
+        if(user == 'AnonymousUser'){
+            updateCookieCart()
+        }else{
+            updateRegisteredUserCart(cartId)
+        }
+    })
+}
+
 
 function updateRegisteredUserCart(cartId){
     url = '/update-registered-user-cart/'

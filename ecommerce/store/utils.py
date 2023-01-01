@@ -129,7 +129,7 @@ def getTrackInfoList(order_status: int):
         'Preparing Order', 
         'Order is Prepared', 
         'Order in Shipping', 
-        'Order is Delivered'
+        'Order is Delivered',
     )
     icon_tuple = (
         'pe-7s-timer',

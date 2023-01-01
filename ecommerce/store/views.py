@@ -10,6 +10,9 @@ from statistics import quantiles
 
 from . utils import cartData, guestOrder, cookieCart, getWishListItems, getCartItemList, getStockInfoList, getProductListFromCartItems
 from store.models import Cart, Product, CartItem, ShippingAddress, WishListItem, Order, OrderItem, Stock, PurchasedItem, SoldItem
+from background_tasks.models import EmailSendingTask
+from background_tasks.enums import SetupStatus
+from background_tasks import signals
 
 
 # Create your views here.
@@ -158,6 +161,10 @@ def processOrder(request):
             customer=customer,
             transaction_id=transaction_id
         )
+        emailSendingTask = EmailSendingTask.objects.create(
+            order=order,
+        )
+        emailSendingTask.save()
         
         cartItems = CartItem.objects.filter(cart=cart, is_checked=True)
         for item in cartItems:
@@ -197,6 +204,10 @@ def completePayment(request):
     order, created = Order.objects.get_or_create(id=data['order_id'])
     order.order_status = 1
     order.save(update_fields=['order_status'])
+    
+    emailSendingTask = EmailSendingTask.objects.get(order=order)
+    emailSendingTask.status = SetupStatus.disabled
+    emailSendingTask.save(update_fields=['status'])
     
     return JsonResponse(f"success", safe=False) 
     
