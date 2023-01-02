@@ -102,7 +102,10 @@ class OrderDetailView(DetailView):
         self.items = OrderItem.objects.filter(order__id=self.order_id)
         
         order = Order.objects.filter(id=self.order_id).first()
-        self.trackInfoList = getTrackInfoList(order.order_status)
         
-        print(f'order_id = {self.order_id}  items = {self.items},  noOfCartItems = {self.noOfCartItems}')
-        return super(OrderDetailView, self).get(request, *args, **kwargs)   
+        if order.order_status == 5:
+            return redirect('/order-list/')
+        else:
+            self.trackInfoList = getTrackInfoList(order.order_status)
+            print(f'order_id = {self.order_id}  items = {self.items},  noOfCartItems = {self.noOfCartItems}')
+            return super(OrderDetailView, self).get(request, *args, **kwargs)   

@@ -15,14 +15,18 @@
                             <th><h5>Items: <strong>{{ order.get_number_of_items }} </strong></h5></th>
                             <th><h5>Total:<strong> ${{order.get_order_total|floatformat:2}} </strong></h5></th>
                             <th>
-                                <a  style="float:right; margin:5px;" class="btn btn-success" href="{% url 'order-details' order.id %}">See Details</a>
+                                {% if order.order_status != 5 %}
+                                    <a  style="float:right; margin:5px;" class="btn btn-success" href="{% url 'order-details' order.id %}">See Details</a>
+                                {% else %}
+                                    <a  style="float:right; margin:5px;" class="btn btn-outline-warning">Cancelled</a>
+                                {% endif %}
                             </th>
                         </tr>
                         <td style="border:0; padding-top:0;">
                             <h5>Status: <strong> {{ order.get_order_status_display }} </strong></h5>
                         </td>   
 
-                        {% if order.order_status == 5 %}
+                        {% if order.order_status == 4 %}
                             <td style="border:0; padding-top:0;">
                                 <h5>Completed: <strong> {{ order.modified|date:"F d, Y" }} </strong></h5>
                             </td>
