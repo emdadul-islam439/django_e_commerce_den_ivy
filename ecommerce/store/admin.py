@@ -11,7 +11,7 @@ class ProductAdminModel(admin.ModelAdmin):
     search_fields=("name",)
 
 class OrderAdminModel(admin.ModelAdmin):
-    list_display=["customer", "order_status", "payment_option", "transaction_id", "modified", "created",]
+    list_display=["id", "customer", "order_status", "payment_option", "transaction_id", "modified", "created",]
     list_filter=["order_status", "payment_option",]
     raw_id_fields=["customer",]
     search_fields=["customer", "transaction_id",]

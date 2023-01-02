@@ -1,5 +1,7 @@
 from django.db import models
+from django.db.models import Q
 from django.contrib.auth.models import User
+
 
 # Create your models here.
 class Customer(models.Model):
@@ -141,7 +143,7 @@ class Order(models.Model):
         ordering = ('-created',)
     
     def __str__(self) -> str:
-        return f'Order #{self.pk}     -     Customer: {self.customer.user}'
+        return f'Order #{self.pk} - Customer: {self.customer.user} - Status: {self.order_status}'
     
     @property
     def products(self):
@@ -305,7 +307,7 @@ class Stock(models.Model):
     
     @property
     def avg_discount_price(self):
-        all_sold_items = SoldItem.objects.filter(product=self.product)
+        all_sold_items = SoldItem.objects.filter(~Q(order__order_status=5), product=self.product)
         total_sell_count = len(all_sold_items)
         
         sum_of_discount_price = sum([item.discount for item in all_sold_items]) if total_sell_count > 0 else 0
@@ -313,7 +315,7 @@ class Stock(models.Model):
     
     @property
     def avg_selling_price(self):
-        all_sold_items = SoldItem.objects.filter(product=self.product)
+        all_sold_items = SoldItem.objects.filter(~Q(order__order_status=5), product=self.product)
         total_sell_count = len(all_sold_items)
         
         sum_of_selling_price = sum([item.discount for item in all_sold_items]) if total_sell_count > 0 else 0
@@ -328,7 +330,7 @@ class Stock(models.Model):
     
     @property 
     def no_of_sold_unit(self):
-        all_sold_items = SoldItem.objects.filter(product=self.product)
+        all_sold_items = SoldItem.objects.filter(~Q(order__order_status=5), product=self.product)
         return sum([item.quantity for item in all_sold_items]) if len(all_sold_items) > 0 else 0
     
     

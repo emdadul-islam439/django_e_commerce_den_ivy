@@ -16,12 +16,10 @@ class EmailSendingTask(models.Model):
     scheduled_email = models.OneToOneField(PeriodicTask, on_delete=models.CASCADE, null=True, blank=True, related_name='scheduled_email')
     created_at = models.DateTimeField(auto_now_add=True)
     
-    
     class Meta:
         verbose_name = 'EmailSendingTask'
         verbose_name_plural = 'EmailSendingTasks'
             
-    
     def __str__(self) -> str:
         return f'EmailSendingTask: Order = {self.order}'
             
@@ -49,27 +47,28 @@ class EmailSendingTask(models.Model):
     def create_scheduled_email(self, order_id, recipient_email):
         self.scheduled_email = PeriodicTask.objects.create(
             name=f'Scheduled Email TASK of ORDER-> {self.order.id}',
-            task='background_tasks.tasks.send_order_cancellation_email',
+            task='background_tasks.tasks.cancel_order_and_send_email',
             one_off=True,
             interval=IntervalSchedule.objects.get(every=2, period='minutes'),
-            args=json.dumps([order_id, recipient_email]),
+            args=json.dumps([order_id, recipient_email, self.id]),
             start_time=timezone.now()
         )
         self.save(update_fields=['scheduled_email'])
         
     def cancel_order(self):
         print(f'Cancelling order')
-        self.order.order_status = 5 # order cancelled
+        self.order.order_status = 5 # order_status = cancelled
+        self.order.save()
         
     def disable_scheduled_email(self):
         print(f'Disabling scheduled email...')
         self.scheduled_email.enabled = False
-        self.save(update_fields=['scheduled_email'])
+        self.scheduled_email.save()
         
     def enable_scheduled_email(self):
+        print(f'Enabling scheduled email...')
         self.scheduled_email.enabled = True
-        self.save(update_fields=['scheduled_email'])
-    
+        self.scheduled_email.save()
     
     #TODO: COULD NOT BE SUCCESSFUL IN THIS FUNCTION, 
     #TODO: PROBLEM-> "Exception Value: maximum recursion depth exceeded while calling a Python object" 

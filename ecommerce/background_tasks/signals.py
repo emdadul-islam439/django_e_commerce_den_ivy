@@ -17,7 +17,8 @@ def create_or_update_periodic_task(sender, instance, created, **kwargs):
             if instance.status == SetupStatus.disabled and instance.scheduled_email.enabled is not False:
                 instance.disable_scheduled_email()
             elif instance.status == SetupStatus.active and instance.scheduled_email.enabled is not True:
-                instance.enable_scheduled_email()
+                # instance.enable_scheduled_email()
+                pass
          
 #TODO: COULD NOT BE SUCCESSFUL DELETING SETUP RELATED TASKS
 #TODO: PROBLEM-> "Exception Value: maximum recursion depth exceeded while calling a Python object" 

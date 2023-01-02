@@ -161,10 +161,9 @@ def processOrder(request):
             customer=customer,
             transaction_id=transaction_id
         )
-        emailSendingTask = EmailSendingTask.objects.create(
+        EmailSendingTask.objects.create(
             order=order,
         )
-        emailSendingTask.save()
         
         cartItems = CartItem.objects.filter(cart=cart, is_checked=True)
         for item in cartItems:
