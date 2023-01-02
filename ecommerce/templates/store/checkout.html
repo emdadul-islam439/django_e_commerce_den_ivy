@@ -151,7 +151,7 @@
             })
             .then((response) => response.json())
             .then((data)=>{
-                console.log('Success: ', data)
+                console.log('Response: data = ', data)
                 {% comment %} alert('Transaction completed') {% endcomment %}
                 var orderId = parseInt(data)
                 console.log('orderId: ', orderId)

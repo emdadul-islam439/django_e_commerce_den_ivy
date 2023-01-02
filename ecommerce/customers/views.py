@@ -102,7 +102,7 @@ class OrderDetailView(DetailView):
         self.items = OrderItem.objects.filter(order__id=self.order_id)
         
         order = Order.objects.filter(id=self.order_id).first()
-        
+    
         if order.order_status == 5:
             return redirect('/order-list/')
         else:
