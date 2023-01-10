@@ -31,6 +31,15 @@ class SoldAdminModel(admin.ModelAdmin):
     raw_id_fields=["product", "order", ]
     search_fields=["product", "order",]
     autocomplete_fields=["product", "order",]
+    
+    def has_add_permission(self, request, obj=None):
+        return False
+    
+    def has_delete_permission(self, request, obj=None):
+        return False
+    
+    def has_change_permission(self, request, obj=None):
+        return False
 
 class StockAdminModel(admin.ModelAdmin):
     search_fields=('product__name',)
