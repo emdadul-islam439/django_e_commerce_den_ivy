@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+from . import settings_secret
 import os
 import django_heroku
 import dj_database_url
@@ -23,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-lyn=@wmahi9cvw0tb8pav%w(7o!!psiux*bcyz04ogj)2o$5+z'
+SECRET_KEY = settings_secret.SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -152,12 +153,12 @@ django_heroku.settings(locals())
 # EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_BACKEND ='django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-DEFAULT_FROM_EMAIL = 'emdadulislam439@gmail.com'
-SERVER_EMAIL = 'emdadulislam439@gmail.com'
+DEFAULT_FROM_EMAIL = settings_secret.DEFAULT_FROM_EMAIL
+SERVER_EMAIL = settings_secret.SERVER_EMAIL
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'emdadulislam439@gmail.com'
-EMAIL_HOST_PASSWORD = 'uzgbaoekqipiwftk'
+EMAIL_HOST_USER = settings_secret.EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = settings_secret.EMAIL_HOST_PASSWORD
 
 # Celery Configuration Options
 CELERY_BROKER_URL = 'redis://localhost:6379'

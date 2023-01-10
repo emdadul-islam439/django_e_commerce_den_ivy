@@ -1,3 +1,4 @@
 virtualEnv
 .DS_Store
 __pycache__
+settings_secret.py
