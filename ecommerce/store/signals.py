@@ -1,4 +1,4 @@
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save, pre_save, pre_delete
 from django.dispatch import receiver
 
 from store.models import Product, Stock, OrderItem, SoldItem
@@ -27,3 +27,13 @@ def create_sold_item(sender, instance, **kwargs):
         quantity=instance.quantity,
         discount=stockInfo.current_discount
     )
+    
+@receiver(pre_delete, sender = OrderItem)
+def delete_sold_item(sender, instance, **kwargs):
+    print(f'IN DELETE-SOLD_ITEM...... sender = {sender} instance = {instance} kwargs = {kwargs}')
+    
+    soldItemInfo = SoldItem.objects.filter(order=instance.order, product=instance.product).first()
+    if soldItemInfo is not None:
+        soldItemInfo.delete()
+    else:
+        raise Exception('No related OrderItem and SoldItem found')

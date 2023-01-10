@@ -242,7 +242,7 @@ class SoldItem(models.Model):
     date_added = models.DateTimeField(auto_now_add=True)
     
     def __str__(self) -> str:
-        return f'SellingItem: product-name = {self.product.name} | customer = {self.customer}'
+        return f'order = {self.order} | SoldItem: product-name = {self.product.name}'
     
     @property
     def unit_selling_price(self):
