@@ -172,15 +172,6 @@ def processOrder(request):
                 order=order,
                 quantity=item.quantity,
             )
-            stockInfo = Stock.objects.filter(product=item.product).first()
-            SoldItem.objects.create(
-                order=order,
-                product=item.product,
-                unit_price=stockInfo.current_unit_price,
-                purchase_price=stockInfo.current_purchase_price,
-                quantity=item.quantity,
-                discount=stockInfo.current_discount
-            )
             item.delete()
     
     if cart.shipping == True:
