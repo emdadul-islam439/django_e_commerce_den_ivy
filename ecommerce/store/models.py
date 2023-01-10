@@ -63,7 +63,7 @@ class Product(models.Model):
     
     
 class Cart(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
+    customer = models.OneToOneField(Customer, on_delete=models.SET_NULL, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     transaction_id = models.CharField(max_length=100, null=True)

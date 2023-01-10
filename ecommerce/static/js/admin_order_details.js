@@ -11,7 +11,7 @@ function getToken(name) {
                 break;
             }
         }
-    }
+    }   
     return cookieValue;
 }
 
